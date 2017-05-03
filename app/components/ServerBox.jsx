@@ -9,10 +9,13 @@ class ServerBox extends Component {
                     <div className="larger-12 columns">
                         <label>Select your Server
                             <select>
-                                <option value="husker">Husker</option>
-                                <option value="starbuck">Starbuck</option>
-                                <option value="hotdog">Hot Dog</option>
-                              <option value="apollo">Apollo</option>
+                                {
+                                  this.props.servers.map((entry, key) => {
+                                    return (
+                                      <option key={key} value={entry}>{entry}</option>
+                                    )
+                                  })
+                                }
                             </select>
                         </label>
                     </div>
