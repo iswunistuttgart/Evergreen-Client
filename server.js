@@ -70,7 +70,7 @@ app.use('/addserver', function(req, res) {
   }
 
   var servername = req.body.servername;
-  var serveradress = req.body.serverip;
+  var serveradress = 'http://' + req.body.serverip;
   var port = req.body.serverport;
 
   fs.readFile('serverlist0.xml', 'utf-8', function(err, data) {
@@ -172,86 +172,33 @@ app.use('/removeserver', function(req, res) {
   });
 })
 
-// //////////////Editing new JSON object and add server object to json
-// app.post('/addserver', function(req, res) {
-//
-// });
-//
-// fs.readFile('serverlist0.xml', 'utf-8', function(err, data) {
-//     if (err) console.log(err);
-//     // we log out the readFile results
-//     console.log(data);
-//     // we then pass the data to our method here
-//     parseString(data, function(err, result) {
-//         if (err) console.log(err);
-//         // here we log the results of our xml string conversion
-//         var serverList = result.serverlist.server;
-//         //get the serverNames from json and save as array
-//         var serverNames = serverList.map((server) => {
-//             return server.serverName[0];
-//         });
-//         //CHECK IF SERVERNAME EXISTS and Add server
-//         function checkAndAdd(servername, serveradress, port) {
-//             //var id = serverList.length + 1;
-//             var found = serverList.some(function (serveritem) {
-//                 return serveritem.serverName[0] === servername;
-//             });
-//            if (!found) { serverList.push({"serverName":[servername],"serverAdress":[serveradress],"port":[port]});
-//                        }
-//                             }
-//         checkAndAdd(servername, serveradress, port);
-//         // create a new builder object and then convert
-//           // our json back to xml.
-//           var builder = new xml2js.Builder();
-//           var xml = builder.buildObject(result);
-//           fs.writeFile('serverlist0.xml', xml, function(err, data){
-//               if (err) console.log(err);
-//               console.log("successfully written our update xml to file");
-//           })
-//       });
-// });
 
-// ///////////////Remove Server from Serverlist
+// ////////Add selected serveradress and port to element <soap:adress /> in wsdl file
+//       //serveradress, should be replaced with selected Servername and Port.
+//       //In this example i used http://Servertest as Serveradress and Portnumber 8080
 //
-// fs.readFile('serverlist0.xml', 'utf-8', function(err, data) {
+//   fs.readFile('EvergreenWebservice.wsdl', 'utf-8', function(err, data) {
 //     if (err) console.log(err);
-//     // we log out the readFile results
-//     console.log(data);
-//     // we then pass the data to our method here
+//
 //     parseString(data, function(err, result) {
-//         if (err) console.log(err);
+//       if (err)
+//         console.log(err);
 //
+//         result['wsdl:definitions']['wsdl:service'][0]['wsdl:port'][0]['soap:address'][0]['$'].location =
+//         'http://Servertest'+ '/8080' + '/malso/services/EvergreenWebService/';
 //
-//         // here we log the results of our xml string conversion
-//         var serverList = result.serverlist.server;
+//         var builder = new xml2js.Builder();
+//         var xml = builder.buildObject(result);
 //
+//         fs.writeFile('EvergreenWebservice.wsdl', xml, function(err, data) {
+//           if (err)
+//             console.log(err);
 //
-//         // get the serverNames from json and save as array
-//         var serverNames = serverList.map((server) => {
-//             return server.serverName[0];
-//         });
-//
-//         // delete server from array
-//         result.serverlist.server = serverList.filter(server =>
-//          server.serverName[0] != "Lokal4"
-//        );
-//
-//        // create a new builder object and then convert
-//          // our json back to xml.
-//          var builder = new xml2js.Builder();
-//          var xml = builder.buildObject(result);
-//
-//          console.log(xml);
-//          fs.writeFile('serverlist0.xml', xml, function(err, data){
-//              if (err) console.log(err);
-//
-//              console.log("successfully written our update xml to file");
-//          })
-//
-//
-//
+//           console.log("successfully written our update xml to file");
+//         })
 //     });
 // });
+
 
 //common pattern for express middleware => let us do something with every request
 //req => index.html or bundle.js

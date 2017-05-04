@@ -11,8 +11,8 @@
     <port>18083</port>
   </server>
   <server>
-    <serverName>asd</serverName>
-    <serverAdress>123</serverAdress>
-    <port>123</port>
+    <serverName>Servertest</serverName>
+    <serverAdress>http://123.2123.213</serverAdress>
+    <port>9090</port>
   </server>
 </serverlist>

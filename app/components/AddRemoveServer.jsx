@@ -86,8 +86,6 @@ class AddRemoveServer extends Component {
       return this.setState({errorFlag: 'Please input server port'})
     } else if (!pattern.test(this.state.addServerIp)) {
       return this.setState({errorFlag: 'Please enter valid server address'})
-    } else if (true) {
-      return this.setState({errorFlag: 'this is true'})
     } else {
       axios.post('/addserver', {servername: this.state.addServerName, serverip: this.state.addServerIp, serverport: this.state.addServerPort})
         .then((result) => {
