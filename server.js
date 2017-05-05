@@ -208,33 +208,6 @@ app.use('/login', function (req, res) {
   });
 })
 
-// ////////Add selected serveradress and port to element <soap:adress /> in wsdl file
-//       //serveradress, should be replaced with selected Servername and Port.
-//       //In this example i used http://Servertest as Serveradress and Portnumber 8080
-//
-//   fs.readFile('EvergreenWebservice.wsdl', 'utf-8', function(err, data) {
-//     if (err) console.log(err);
-//
-//     parseString(data, function(err, result) {
-//       if (err)
-//         console.log(err);
-//
-//         result['wsdl:definitions']['wsdl:service'][0]['wsdl:port'][0]['soap:address'][0]['$'].location =
-//         'http://Servertest'+ '/8080' + '/malso/services/EvergreenWebService/';
-//
-//         var builder = new xml2js.Builder();
-//         var xml = builder.buildObject(result);
-//
-//         fs.writeFile('EvergreenWebservice.wsdl', xml, function(err, data) {
-//           if (err)
-//             console.log(err);
-//
-//           console.log("successfully written our update xml to file");
-//         })
-//     });
-// });
-
-
 //common pattern for express middleware => let us do something with every request
 //req => index.html or bundle.js
 //res => what cant sent back
