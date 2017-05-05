@@ -4,7 +4,7 @@ import ServerBox from './ServerBox';
 import AddRemoveServer from './AddRemoveServer';
 import axios from 'axios';
 
-export default class LoginApp extends Component {
+class LoginApp extends Component {
 
   constructor(props) {
     super(props);
@@ -53,7 +53,7 @@ export default class LoginApp extends Component {
               <form>
                 <ServerBox servers={this.state.servers} setSelected={this.setSelected} selectedServer={this.state.selected}/>
                 <AddRemoveServer servers={this.state.servers} refreshServers={this.refreshServers} selectedServer={this.state.selected}/>
-                <Login/>
+                <Login router={this.context.router} selectedServer={this.state.selected}/>
               </form>
             </div>
           </div>
@@ -62,3 +62,9 @@ export default class LoginApp extends Component {
     );
   }
 }
+
+LoginApp.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};
+
+export default LoginApp;

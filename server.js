@@ -173,6 +173,41 @@ app.use('/removeserver', function(req, res) {
 })
 
 
+app.use('/login', function (req, res) {
+  if (!req.body.serveradress) {
+    return res.status(400).send('serveradress missing!')
+  }
+
+  if (!req.body.port) {
+    return res.status(400).send('port missing!')
+  }
+
+    fs.readFile('EvergreenWebService.wsdl', 'utf-8', function(err, data) {
+      console.log('Err', err);
+
+      if (err) return res.status(500).send('couldn\'t read file');
+
+      parseString(data, function(err, result) {
+        if (err)
+          return res.status(500).send('couldn\'t parse');
+
+          result['wsdl:definitions']['wsdl:service'][0]['wsdl:port'][0]['soap:address'][0]['$'].location =
+          req.body.serveradress + ':' + req.body.port + '/malso/services/EvergreenWebService/';
+
+          var builder = new xml2js.Builder();
+          var xml = builder.buildObject(result);
+
+          fs.writeFile('EvergreenWebService.wsdl', xml, function(err, data) {
+            if (err)
+              return res.status(500).send('couldn\'t write file!')
+
+            console.log("successfully written our update xml to file");
+            res.send('success');
+          })
+      });
+  });
+})
+
 // ////////Add selected serveradress and port to element <soap:adress /> in wsdl file
 //       //serveradress, should be replaced with selected Servername and Port.
 //       //In this example i used http://Servertest as Serveradress and Portnumber 8080

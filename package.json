@@ -13,6 +13,7 @@
     "axios": "^0.15.3",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
+    "jquery.soap": "^1.6.9",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-router": "^2.0.0",

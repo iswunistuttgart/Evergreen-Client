@@ -15,4 +15,19 @@
     <serverAdress>http://123.2123.213</serverAdress>
     <port>9090</port>
   </server>
+  <server>
+    <serverName>localhost3</serverName>
+    <serverAdress>http://123.2123.213</serverAdress>
+    <port>234234</port>
+  </server>
+  <server>
+    <serverName>EvergreenWebService</serverName>
+    <serverAdress>http://192.168.178.49</serverAdress>
+    <port>18083</port>
+  </server>
+  <server>
+    <serverName>WebserviceEvergreen</serverName>
+    <serverAdress>http://192.168.178.49</serverAdress>
+    <port>18083</port>
+  </server>
 </serverlist>
