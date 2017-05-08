@@ -11,22 +11,22 @@
     <port>18083</port>
   </server>
   <server>
-    <serverName>Servertest</serverName>
-    <serverAdress>http://123.2123.213</serverAdress>
-    <port>9090</port>
-  </server>
-  <server>
-    <serverName>localhost3</serverName>
-    <serverAdress>http://123.2123.213</serverAdress>
-    <port>234234</port>
-  </server>
-  <server>
     <serverName>EvergreenWebService</serverName>
+    <serverAdress>http://192.168.2.155</serverAdress>
+    <port>18083</port>
+  </server>
+  <server>
+    <serverName>test</serverName>
+    <serverAdress>http://123.2123.213</serverAdress>
+    <port>8080</port>
+  </server>
+  <server>
+    <serverName>NewServer</serverName>
     <serverAdress>http://192.168.178.49</serverAdress>
     <port>18083</port>
   </server>
   <server>
-    <serverName>WebserviceEvergreen</serverName>
+    <serverName>Newest Server</serverName>
     <serverAdress>http://192.168.178.49</serverAdress>
     <port>18083</port>
   </server>

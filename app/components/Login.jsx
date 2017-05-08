@@ -31,29 +31,14 @@ class Login extends Component {
     } else if (!this.state.password) {
       return this.setState({errorFlag: 'Please input password'})
     } else {
-      axios.post('/login', {servername: this.props.selectedServer.serverName, serveradress: this.props.selectedServer.serverAdress, port: this.props.selectedServer.port})
+      axios.post('/login', {servername: this.props.selectedServer.serverName, serveradress: this.props.selectedServer.serverAdress, port: this.props.selectedServer.port, username: this.state.username, password: this.state.password})
         .then((result) => {
-          $.soap({
-          	url: `${this.props.selectedServer.serverAdress}:${this.props.selectedServer.port}/malso/services/EvergreenWebService/`,
-          	method: 'Connection',
-          	data: {
-                    loginInformation: {
-                      UserName: this.state.username,
-                      UserPassword: this.state.password,
-                    }
-                  },
-          	success: (soapResponse) => {
-              this.setState({
-                username: '',
-                password: '',
-                errorFlag: ''
-              })
-              this.props.router.push('/home')
-          	},
-          	error: (SOAPResponse) => {
-          		this.setState({errorFlag: 'something wrong'})
-          	}
-          });
+          this.setState({
+            username: '',
+            password: '',
+            errorFlag: ''
+          })
+          this.props.router.push('/home')
         })
         .catch((e) => {
           console.log('e!!!!', e)

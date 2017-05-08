@@ -3,6 +3,9 @@ var bodyParser = require('body-parser');
 var fs = require('fs');
 var xml2js = require('xml2js');
 parseString = require('xml2js').parseString;
+var soap = require('soap');
+
+
 
 // Create our app
 var app = express();
@@ -12,7 +15,7 @@ app.use(bodyParser.json());
 const PORT = process.env.PORT || 3000;
 
 var fs = require('fs'),
-  parseString = require('xml2js').parseString;
+    parseString = require('xml2js').parseString;
 
 //////////////// Read Serverlist.XML file and Sername
 app.get('/readserverlist', (req, res) => {
@@ -182,46 +185,155 @@ app.use('/login', function (req, res) {
     return res.status(400).send('port missing!')
   }
 
-    fs.readFile('EvergreenWebService.wsdl', 'utf-8', function(err, data) {
-      console.log('Err', err);
+  if (!req.body.username) {
+    return res.status(400).send('username missing!')
+  }
 
-      if (err) return res.status(500).send('couldn\'t read file');
+  if (!req.body.password) {
+    return res.status(400).send('password missing!')
+  }
 
-      parseString(data, function(err, result) {
-        if (err)
-          return res.status(500).send('couldn\'t parse');
+  fs.readFile('EvergreenWebService.wsdl', 'utf-8', function(err, data) {
+    console.log('Err', err);
 
-          result['wsdl:definitions']['wsdl:service'][0]['wsdl:port'][0]['soap:address'][0]['$'].location =
-          req.body.serveradress + ':' + req.body.port + '/malso/services/EvergreenWebService/';
+    if (err) return res.status(500).send('couldn\'t read file');
 
-          var builder = new xml2js.Builder();
-          var xml = builder.buildObject(result);
+    parseString(data, function(err, result) {
+      if (err)
+        return res.status(500).send('couldn\'t parse');
 
-          fs.writeFile('EvergreenWebService.wsdl', xml, function(err, data) {
+        result['wsdl:definitions']['wsdl:service'][0]['wsdl:port'][0]['soap:address'][0]['$'].location =
+        req.body.serveradress + ':' + req.body.port + '/malso/services/EvergreenWebService/';
+
+        var builder = new xml2js.Builder();
+        var xml = builder.buildObject(result);
+
+        fs.writeFile('EvergreenWebService.wsdl', xml, function(err, data) {
+          if (err)
+            return res.status(500).send('couldn\'t write file!')
+
+          var args = {
+            loginInformation: {
+              UserName: req.body.username,
+              UserPassword: req.body.password
+            }
+          }
+
+          soap.createClient('./EvergreenWebService.wsdl', function (err, client) {
             if (err)
-              return res.status(500).send('couldn\'t write file!')
+              return res.status(500).send('couldn\'t create soap client');
 
-            console.log("successfully written our update xml to file");
-            res.send('success');
+            client.Connection(args, function(err, response) {
+              if (err)
+                return res.status(500).send('error occured');
+
+              if (response.errors && response.errors.Errors)
+                return res.status(400).send(response.errors.Errors.ErrorMessage);
+
+              if (!response.result)
+                return res.status(500).send('something wrong');
+
+              res.send(response.result);
+            })
           })
-      });
+        })
+    });
   });
 })
+
+/////Login with username and password
+// var url = './EvergreenWebService.wsdl';
+// var args = {
+//     loginInformation: {
+//         UserName: 'admin',
+//         UserPassword: 'admin'
+//     }
+// };
+// soap.createClient(url, function(err, client) {
+//     client.Connection(args, function(err, result) {
+//         console.log(JSON.stringify(result));
+//     });
+// });
+
+
+// ///Get All Groups and Sites
+// var url = './EvergreenWebService.wsdl';
+// var args = {
+//     auth: {
+//         AuthSession: 'exuieaoEiIgxIX4a2dREbbSqWy6yhK'
+//     }
+// };
+// soap.createClient(url, function(err, client) {
+//     client.GetUserPageConfig(args, function(err, result) {
+//         //console.log(JSON.stringify(result));
+//         var Title = result.Config.Groups[0].Title;
+//         console.log(Title);
+//
+//     });
+// });
+
+
+
+///Modify (Add+Remove) Groups and Sites
+// var url = './EvergreenWebService.wsdl';
+// var args = {
+//     auth: {
+//         AuthSession: 'exuieaoEiIgxIX4a2dREbbSqWy6yhK'
+//     },
+//
+//         NewConfig: {
+//             OwnerId: 'admin',
+//             Groups: [{
+//                     Title: 'A',
+//                     Index: 1,
+//                     Pages: ['317', '321', '322', '327'],
+//                 },
+//                 {
+//                     Title: 'B',
+//                     Index: 2,
+//                     Pages: ['323', '324', '329'],
+//                 },
+//                 {
+//                     Title: 'D',
+//                     Index: 3,
+//                     Pages: ['325'],
+//                 },
+//                 {
+//                     Title: 'E',
+//                     Index: 4,
+//                     Pages: [],
+//                 },
+//             ],
+//         },
+// };
+//
+// soap.createClient(url, function(err, client) {
+//     client.ModifyUserPageConfig(args, function(err, result) {
+//         console.log(JSON.stringify(result));
+//     });
+// });
+
+
+
+
+
+
+
 
 //common pattern for express middleware => let us do something with every request
 //req => index.html or bundle.js
 //res => what cant sent back
 //next => move on e.g call when middles is done
 app.use(function(req, res, next) {
-  if (req.headers['x-forwarded-proto'] === 'https') {
-    res.redirect('http://' + req.hostname + req.url);
-  } else {
-    next();
-  }
+    if (req.headers['x-forwarded-proto'] === 'https') {
+        res.redirect('http://' + req.hostname + req.url);
+    } else {
+        next();
+    }
 });
 
 app.use(express.static('public'));
 
 app.listen(PORT, function() {
-  console.log('Express server is up on port ' + PORT);
+    console.log('Express server is up on port ' + PORT);
 });
