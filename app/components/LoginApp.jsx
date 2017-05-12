@@ -27,6 +27,9 @@ class LoginApp extends Component {
       })
   }
 
+  componentDidMount () {
+  }
+
   refreshServers = () => {
     axios.get('readserverlist')
       .then((result) => {

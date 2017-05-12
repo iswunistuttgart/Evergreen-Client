@@ -5,8 +5,6 @@ var xml2js = require('xml2js');
 parseString = require('xml2js').parseString;
 var soap = require('soap');
 
-
-
 // Create our app
 var app = express();
 app.use(bodyParser.urlencoded());
@@ -14,10 +12,12 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3000;
 
+const webServiceUrl = './EvergreenWebService.wsdl';
+
 var fs = require('fs'),
     parseString = require('xml2js').parseString;
 
-//////////////// Read Serverlist.XML file and Sername
+// //////////////// Read Serverlist.XML file and Sername
 app.get('/readserverlist', (req, res) => {
   fs.readFile('serverlist0.xml', 'utf-8', function(err, data) {
     if (err)
@@ -193,7 +193,7 @@ app.use('/login', function (req, res) {
     return res.status(400).send('password missing!')
   }
 
-  fs.readFile('EvergreenWebService.wsdl', 'utf-8', function(err, data) {
+  fs.readFile(webServiceUrl, 'utf-8', function(err, data) {
     console.log('Err', err);
 
     if (err) return res.status(500).send('couldn\'t read file');
@@ -208,7 +208,7 @@ app.use('/login', function (req, res) {
         var builder = new xml2js.Builder();
         var xml = builder.buildObject(result);
 
-        fs.writeFile('EvergreenWebService.wsdl', xml, function(err, data) {
+        fs.writeFile(webServiceUrl, xml, function(err, data) {
           if (err)
             return res.status(500).send('couldn\'t write file!')
 
@@ -219,7 +219,13 @@ app.use('/login', function (req, res) {
             }
           }
 
-          soap.createClient('./EvergreenWebService.wsdl', function (err, client) {
+          // fs.readFile('LoginResult.json', function (err, loginresult) {
+          //   if (err) return res.status(500).send('couldn\'t read file');
+          //
+          //   res.send(JSON.parse(loginresult).result);
+          // })
+
+          soap.createClient(webServiceUrl, function (err, client) {
             if (err)
               return res.status(500).send('couldn\'t create soap client');
 
@@ -241,79 +247,213 @@ app.use('/login', function (req, res) {
   });
 })
 
-/////Login with username and password
-// var url = './EvergreenWebService.wsdl';
-// var args = {
-//     loginInformation: {
-//         UserName: 'admin',
-//         UserPassword: 'admin'
-//     }
-// };
-// soap.createClient(url, function(err, client) {
-//     client.Connection(args, function(err, result) {
-//         console.log(JSON.stringify(result));
-//     });
-// });
+// here need to remove session from database for now its just removing it from frontend sessionStorage
+
+app.use('/logout', function (req, res) {
+  if (!req.body.session) {
+    return res.status(400).send('session missing!')
+  }
+
+  var args = {
+    auth: {
+      AuthSession: req.body.session
+    }
+  }
+
+  soap.createClient(webServiceUrl, function (err, client) {
+    if (err)
+      return res.status(500).send('couldn\'t create soap client');
+
+    client.Disconnect(args, function(err, response) {
+      if (err)
+        return res.status(500).send('error occured');
+
+      if (response.errors && response.errors.Errors)
+        return res.status(400).send(response.errors.Errors.ErrorMessage);
+
+      res.send(response.result);
+    })
+  })
+})
+
+// for now its reading from file
+app.use('/getUserPageConfig', function (req, res) {
+  if (!req.body.session) {
+    return res.status(400).send('session missing!');
+  }
+
+  var args = {
+    auth: {
+      AuthSession: req.body.session
+    }
+  }
+
+  soap.createClient(webServiceUrl, function (err, client) {
+    if (err)
+      return res.status(500).send('couldn\'t create soap client');
+
+    client.GetUserPageConfig(args, function(err, response) {
+      if (err)
+        return res.status(500).send('error occured');
+
+      if (response.errors && response.errors.Errors)
+        return res.status(400).send(response.errors.Errors.ErrorMessage);
+
+      if (!response.Config)
+        return res.status(500).send('something wrong');
+
+      res.send(response.Config);
+    })
+  })
+
+  // fs.readFile('GetUserPageConfig.json', function (err, result) {
+  //   if (err)
+  //     return res.status(400).send('couldm\'t read file!')
+  //
+  //   var jsonData = JSON.parse(result);
+  //
+  //   res.send(jsonData.Config);
+  // })
+})
+
+app.use('/modifyUserPageConfig', function (req, res) {
+
+  if (!req.body.session) {
+    return res.status(400).send('session missing!');
+  }
+
+  let args = {
+    auth: {
+      AuthSession: req.body.session
+    },
+    NewConfig: req.body.config
+  }
+
+  soap.createClient(webServiceUrl, function (err, client) {
+    if (err)
+      return res.status(500).send('couldn\'t create soap client');
+
+    client.ModifyUserPageConfig(args, function(err, response) {
+      if (err)
+        return res.status(500).send('error occured');
+
+      if (response.errors && response.errors.Errors)
+        return res.status(400).send(response.errors.Errors.ErrorMessage);
+
+      res.send(response);
+    })
+  })
+})
 
 
-// ///Get All Groups and Sites
-// var url = './EvergreenWebService.wsdl';
-// var args = {
-//     auth: {
-//         AuthSession: 'exuieaoEiIgxIX4a2dREbbSqWy6yhK'
-//     }
-// };
-// soap.createClient(url, function(err, client) {
-//     client.GetUserPageConfig(args, function(err, result) {
-//         //console.log(JSON.stringify(result));
-//         var Title = result.Config.Groups[0].Title;
-//         console.log(Title);
+app.use('/addPage', function (req, res) {
+  if (!req.body.session) return res.status(400).send('session missing!');
+  if (!req.body.page) return res.status(400).send('page missing!');
+
+  let args = {
+    auth: {
+      AuthSession: req.body.session
+    },
+    NewPage: req.body.page
+  }
+
+  soap.createClient(webServiceUrl, function (err, client) {
+    if (err)
+      return res.status(500).send('couldn\'t create soap client');
+
+    client.AddPage(args, function(err, response) {
+      if (err)
+        return res.status(500).send('error occured');
+
+      if (response.errors && response.errors.Errors)
+        return res.status(400).send(response.errors.Errors.ErrorMessage);
+
+      res.send(response);
+    })
+  })
+
+  // res.send({"PageId": "348", "errors": null})
+})
+
+app.use('/deletePage', function (req, res) {
+  if (!req.body.session) return res.status(400).send('session missing!');
+  if (!req.body.pageId) return res.status(400).send('pageId missing!');
+
+  let args = {
+    auth: {
+      AuthSession: req.body.session
+    },
+    PageID: req.body.pageId
+  }
+
+  soap.createClient(webServiceUrl, function (err, client) {
+    if (err)
+      return res.status(500).send('couldn\'t create soap client');
+
+    client.DeletePage(args, function(err, response) {
+      if (err)
+        return res.status(500).send('error occured');
+
+      if (response.errors && response.errors.Errors)
+        return res.status(400).send(response.errors.Errors.ErrorMessage);
+
+      res.send(response);
+    })
+  })
+
+  // res.send('success');
+})
+
+app.use('/editPage', function (req, res) {
+  if (!req.body.session) return res.status(400).send('session missing!');
+  if (!req.body.page) return res.status(400).send('page missing!');
+
+  let args = {
+    auth: {
+      AuthSession: req.body.session
+    },
+    Page: req.body.page
+  }
+
+  console.log('args', args);
+
+  soap.createClient(webServiceUrl, function (err, client) {
+    if (err)
+      return res.status(500).send('couldn\'t create soap client');
+
+    client.ModifyPage(args, function(err, response) {
+      if (err)
+        return res.status(500).send('error occured');
+
+      if (response.errors && response.errors.Errors)
+        return res.status(400).send(response.errors.Errors.ErrorMessage);
+
+      res.send(response);
+    })
+  })
+
+  // res.send('success');
+})
+
+
 //
-//     });
-// });
-
-
-
-///Modify (Add+Remove) Groups and Sites
 // var url = './EvergreenWebService.wsdl';
 // var args = {
 //     auth: {
-//         AuthSession: 'exuieaoEiIgxIX4a2dREbbSqWy6yhK'
+//         AuthSession: 'NIsNrmwUlN5u9t3tgj2tusZBauFkrF'
 //     },
 //
-//         NewConfig: {
-//             OwnerId: 'admin',
-//             Groups: [{
-//                     Title: 'A',
-//                     Index: 1,
-//                     Pages: ['317', '321', '322', '327'],
-//                 },
-//                 {
-//                     Title: 'B',
-//                     Index: 2,
-//                     Pages: ['323', '324', '329'],
-//                 },
-//                 {
-//                     Title: 'D',
-//                     Index: 3,
-//                     Pages: ['325'],
-//                 },
-//                 {
-//                     Title: 'E',
-//                     Index: 4,
-//                     Pages: [],
-//                 },
-//             ],
+//         NewPage: {
+//             Title: 'test',
+//             ConfigXML: ''
 //         },
 // };
 //
 // soap.createClient(url, function(err, client) {
-//     client.ModifyUserPageConfig(args, function(err, result) {
+//     client.AddPage(args, function(err, result) {
 //         console.log(JSON.stringify(result));
-//     });
-// });
-
-
+//      });
+//  });
 
 
 

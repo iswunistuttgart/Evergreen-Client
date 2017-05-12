@@ -15,6 +15,9 @@ class Login extends Component {
     };
   }
 
+  componentDidMount() {
+  }
+
   handleInputChange = (event) => {
     const target = event.target;
     const value = target.value;
@@ -38,6 +41,12 @@ class Login extends Component {
             password: '',
             errorFlag: ''
           })
+
+          console.log('@@!!', result)
+
+          window.sessionStorage.setItem("session", result.data.Session);
+          window.sessionStorage.setItem("sessionType", result.data.SessionType);
+
           this.props.router.push('/home')
         })
         .catch((e) => {
