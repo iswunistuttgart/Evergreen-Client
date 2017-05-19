@@ -346,6 +346,8 @@ app.use('/modifyUserPageConfig', function (req, res) {
 })
 
 
+
+
 app.use('/addPage', function (req, res) {
   if (!req.body.session) return res.status(400).send('session missing!');
   if (!req.body.page) return res.status(400).send('page missing!');
@@ -435,25 +437,63 @@ app.use('/editPage', function (req, res) {
   // res.send('success');
 })
 
+app.use('/getMachineNames', function (req, res) {
+  let args = {
+    auth: {
+      AuthSession: req.body.session
+    },
+    Page: req.body.page
+  }
 
-//
-// var url = './EvergreenWebService.wsdl';
-// var args = {
-//     auth: {
-//         AuthSession: 'NIsNrmwUlN5u9t3tgj2tusZBauFkrF'
-//     },
-//
-//         NewPage: {
-//             Title: 'test',
-//             ConfigXML: ''
-//         },
-// };
-//
-// soap.createClient(url, function(err, client) {
-//     client.AddPage(args, function(err, result) {
-//         console.log(JSON.stringify(result));
-//      });
-//  });
+  soap.createClient(webServiceUrl, function (err, client) {
+    if (err)
+      return res.status(500).send('couldn\'t create soap client');
+
+    client.GetMachines(args, function(err, response) {
+      if (err)
+        return res.status(500).send('error occured');
+
+      if (response.errors && response.errors.Errors)
+        return res.status(400).send(response.errors.Errors.ErrorMessage);
+
+      res.send(response);
+    })
+  })
+
+  // res.send(fs.readFileSync('./GetMachinesResult.json'));
+})
+
+
+
+
+
+ app.use('/getAllNodes', function (req, res) {
+   let args = {
+     auth: {
+       AuthSession: req.body.session
+     },
+     Page: req.body.page
+   }
+
+   soap.createClient(webServiceUrl, function (err, client) {
+     if (err)
+       return res.status(500).send('couldn\'t create soap client');
+
+     client.GetAllNodes(args, function(err, response) {
+       if (err)
+         return res.status(500).send('error occured');
+
+       if (response.errors && response.errors.Errors)
+         return res.status(400).send(response.errors.Errors.ErrorMessage);
+
+       res.send(response);
+     })
+   })
+
+  //  res.send(fs.readFileSync('./GetAllNodesResult.json'));
+ })
+
+
 
 
 
