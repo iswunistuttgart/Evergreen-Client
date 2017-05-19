@@ -18,7 +18,9 @@ class Page extends Component {
                   Delete
                 </div>
               </div>
-              Page 1
+              <a>
+                Page 1
+              </a>
             </li>
           )
         })}
