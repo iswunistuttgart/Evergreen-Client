@@ -360,7 +360,7 @@ class Home extends Component {
                             <button type="submit" onClick={() => this.pageEditHandler(index, pageIndex, page)}>Save</button>
                           </div>
                           :
-                          <span>{page.Title}</span>
+                          <a href="#/newPage">{page.Title}</a>
                         }
                       </li>
                     )
@@ -382,7 +382,7 @@ class Home extends Component {
                           <button type="submit" onClick={() => this.pageEditHandler(index, null, entry.Pages)}>Save</button>
                         </div>
                         :
-                        <span>{entry.Pages.Title}</span>
+                        <a href="#/newPage">{entry.Pages.Title}</a>
                       }
                     </li>
                   }
