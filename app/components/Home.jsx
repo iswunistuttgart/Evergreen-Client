@@ -16,7 +16,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    axios.post('/getUserPageConfig', {session: window.sessionStorage.getItem("session")}).then((userPageConfig) => {
+    axios.post('/rest/pageconfig/get', {session: window.sessionStorage.getItem("session")}).then((userPageConfig) => {
       console.log('aa', userPageConfig.data);
       this.setState({groups: userPageConfig.data.Groups, ownerId: userPageConfig.data.OwnerId})
     }).catch((err) => {})
@@ -87,9 +87,9 @@ class Home extends Component {
       }
     })
 
-    axios.post('modifyUserPageConfig', {session: window.sessionStorage.getItem("session"), config: {OwnerId: this.state.ownerId, Groups: tempGroups}})
+    axios.post('/rest/pageconfig/update', {session: window.sessionStorage.getItem("session"), config: {OwnerId: this.state.ownerId, Groups: tempGroups}})
       .then(() => {
-        axios.post('deletePage', {session: window.sessionStorage.getItem("session"), pageId: pageId})
+        axios.post('/rest/page/delete', {session: window.sessionStorage.getItem("session"), pageId: pageId})
           .then((result) => {
           })
           .catch((error) => {
@@ -102,7 +102,7 @@ class Home extends Component {
   }
 
   editFunction = (page) => {
-    axios.post('editPage', {session: window.sessionStorage.getItem("session"), page: page})
+    axios.post('/rest/page/update', {session: window.sessionStorage.getItem("session"), page: page})
       .then((result) => {
 
       })
@@ -175,7 +175,7 @@ class Home extends Component {
 
     let title = this.refs['pageCreateInput' + index].value;
     if (title) {
-      axios.post('addPage', {session: window.sessionStorage.getItem("session"), page: {Title: title, ConfigXML: ''}})
+      axios.post('/rest/page/add', {session: window.sessionStorage.getItem("session"), page: {Title: title, ConfigXML: ''}})
       .then((result) => {
         if (Object.prototype.toString.call( this.state.groups[index].Pages ) === '[object Object]') {
           this.setState(Object.assign({}, this.state, {
@@ -303,10 +303,10 @@ class Home extends Component {
     })
 
 
-    axios.post('modifyUserPageConfig', {session: window.sessionStorage.getItem("session"), config: {OwnerId: this.state.ownerId, Groups: tempGroups}})
+    axios.post('/rest/pageconfig/update', {session: window.sessionStorage.getItem("session"), config: {OwnerId: this.state.ownerId, Groups: tempGroups}})
       .then(() => {
         if (flag) {
-          axios.post('/getUserPageConfig', {session: window.sessionStorage.getItem("session")}).then((userPageConfig) => {
+          axios.post('/rest/pageconfig/get', {session: window.sessionStorage.getItem("session")}).then((userPageConfig) => {
             this.setState({groups: userPageConfig.data.Groups, ownerId: userPageConfig.data.OwnerId})
           }).catch((err) => {})
         }

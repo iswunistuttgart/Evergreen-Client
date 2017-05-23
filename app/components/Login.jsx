@@ -34,7 +34,7 @@ class Login extends Component {
     } else if (!this.state.password) {
       return this.setState({errorFlag: 'Please input password'})
     } else {
-      axios.post('/login', {servername: this.props.selectedServer.serverName, serveradress: this.props.selectedServer.serverAdress, port: this.props.selectedServer.port, username: this.state.username, password: this.state.password})
+      axios.post('/rest/auth/login', {servername: this.props.selectedServer.serverName, serveradress: this.props.selectedServer.serverAdress, port: this.props.selectedServer.port, username: this.state.username, password: this.state.password})
         .then((result) => {
           this.setState({
             username: '',

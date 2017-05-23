@@ -87,7 +87,7 @@ class AddRemoveServer extends Component {
     } else if (!pattern.test(this.state.addServerIp)) {
       return this.setState({errorFlag: 'Please enter valid server address'})
     } else {
-      axios.post('/addserver', {servername: this.state.addServerName, serverip: this.state.addServerIp, serverport: this.state.addServerPort})
+      axios.post('/rest/server/add', {servername: this.state.addServerName, serverip: this.state.addServerIp, serverport: this.state.addServerPort})
         .then((result) => {
           this.setState({
             addServerName: '',
@@ -106,7 +106,7 @@ class AddRemoveServer extends Component {
   }
 
   removeServer = () => {
-    axios.post('/removeserver', {servername: this.state.removeServerName})
+    axios.post('/rest/server/remove', {servername: this.state.removeServerName})
       .then((result) => {
         this.setState({
           removeServerName: '',

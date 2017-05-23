@@ -1,0 +1,1182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.evergreen-project.com/web-service/1.0" name="EvergreenWebService" targetNamespace="http://www.evergreen-project.com/web-service/1.0" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns:ns11="http://www.evergreen-project.com/web-service/1.0" xmlns:ns3="http://www.evergreen-project.com/web-service/1.0" xmlns:ns12="http://www.evergreen-project.com/web-service/1.0" xmlns:ns4="http://www.evergreen-project.com/web-service/1.0" xmlns:ns22="http://www.evergreen-project.com/web-service/1.0" xmlns:ns5="http://www.evergreen-project.com/web-service/1.0" xmlns:ns32="http://www.evergreen-project.com/web-service/1.0" xmlns:ns37="http://www.evergreen-project.com/web-service/1.0" xmlns:ns7="http://www.evergreen-project.com/web-service/1.0" xmlns:ns8="http://www.evergreen-project.com/web-service/1.0" xmlns:ns0="http://www.evergreen-project.com/web-service/1.0" xmlns:ns1="http://www.evergreen-project.com/web-service/1.0" xmlns:ns21="http://www.evergreen-project.com/web-service/1.0" xmlns:ns31="http://www.evergreen-project.com/web-service/1.0" xmlns:ns26="http://www.evergreen-project.com/web-service/1.0" xmlns:ns36="http://www.evergreen-project.com/web-service/1.0" xmlns:ns17="http://www.evergreen-project.com/web-service/1.0" xmlns:ns27="http://www.evergreen-project.com/web-service/1.0" xmlns:ns10="http://www.evergreen-project.com/web-service/1.0" xmlns:ns20="http://www.evergreen-project.com/web-service/1.0" xmlns:ns30="http://www.evergreen-project.com/web-service/1.0" xmlns:ns25="http://www.evergreen-project.com/web-service/1.0" xmlns:ns35="http://www.evergreen-project.com/web-service/1.0" xmlns:ns16="http://www.evergreen-project.com/web-service/1.0" xmlns:ns29="http://www.evergreen-project.com/web-service/1.0" xmlns:ns9="http://www.evergreen-project.com/web-service/1.0" xmlns:ns6="http://www.evergreen-project.com/web-service/1.0" xmlns:ns24="http://www.evergreen-project.com/web-service/1.0" xmlns:ns34="http://www.evergreen-project.com/web-service/1.0" xmlns:ns15="http://www.evergreen-project.com/web-service/1.0" xmlns:ns28="http://www.evergreen-project.com/web-service/1.0" xmlns:ns19="http://www.evergreen-project.com/web-service/1.0" xmlns:ns13="http://www.evergreen-project.com/web-service/1.0" xmlns:ns2="http://www.evergreen-project.com/web-service/1.0" xmlns:ns23="http://www.evergreen-project.com/web-service/1.0" xmlns:ns33="http://www.evergreen-project.com/web-service/1.0" xmlns:ns14="http://www.evergreen-project.com/web-service/1.0" xmlns:ns18="http://www.evergreen-project.com/web-service/1.0" targetNamespace="http://www.evergreen-project.com/web-service/1.0">
+      <xsd:simpleType name="SessionKindType">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="ADMIN"/>
+          <xsd:enumeration value="EDITOR"/>
+          <xsd:enumeration value="USER"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="NodeKindType">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="FUNCTION"/>
+          <xsd:enumeration value="VARIABLE_BOOLEAN"/>
+          <xsd:enumeration value="VARIABLE_INT8"/>
+          <xsd:enumeration value="VARIABLE_UINT8"/>
+          <xsd:enumeration value="VARIABLE_INT16"/>
+          <xsd:enumeration value="VARIABLE_UINT16"/>
+          <xsd:enumeration value="VARIABLE_INT32"/>
+          <xsd:enumeration value="VARIABLE_UINT32"/>
+          <xsd:enumeration value="VARIABLE_INT64"/>
+          <xsd:enumeration value="VARIABLE_UINT64"/>
+          <xsd:enumeration value="VARIABLE_FLOAT"/>
+          <xsd:enumeration value="VARIABLE_DOUBLE"/>
+          <xsd:enumeration value="VARIABLE_STRING"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="RightKindType">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="NONE"/>
+          <xsd:enumeration value="READ"/>
+          <xsd:enumeration value="READ+WRITE"/>
+          <xsd:enumeration value="EXECUTE"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="ErrorKindType">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="WARNING"/>
+          <xsd:enumeration value="ERROR"/>
+          <xsd:enumeration value="CRITICAL_ERROR"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="ConnectionEnum">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="Online"/>
+          <xsd:enumeration value="Offline"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:complexType name="LoginInformationType">
+        <xsd:sequence>
+          <xsd:element name="UserName" type="xsd:string"/>
+          <xsd:element name="UserPassword" type="xsd:string"/>
+          <xsd:element name="TimeStamp" type="xsd:string"/>
+          <xsd:element name="Random" type="xsd:string"/>
+          <xsd:element name="Status" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="LoginInformationResponseType">
+        <xsd:sequence>
+          <xsd:element name="Session" type="xsd:string"/>
+          <xsd:element name="SessionType" type="ns18:SessionKindType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ErrorResponseType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Errors" type="ns18:ErrorType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ErrorType">
+        <xsd:sequence>
+          <xsd:element name="ErrorId" type="xsd:int"/>
+          <xsd:element name="ErrorMessage" type="xsd:string"/>
+          <xsd:element name="ErrorWeight" type="ns18:ErrorKindType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ConnectionAuthType">
+        <xsd:sequence>
+          <xsd:element name="AuthSession" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="VarValuesInteractType">
+        <xsd:sequence>
+          <xsd:element maxOccurs="unbounded" name="VarValues" type="ns18:VarValueType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="VarValuesResponseType">
+        <xsd:sequence>
+          <xsd:element maxOccurs="unbounded" name="VarValues" type="ns18:VarValueResponseType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="IdSetType">
+        <xsd:sequence>
+          <xsd:element maxOccurs="unbounded" name="VarId" type="ns11:IdTuple"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="IdResponseType">
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="ContextId" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Errors" type="ns18:ErrorType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="IdSetResponseType">
+        <xsd:sequence>
+          <xsd:element maxOccurs="unbounded" name="IdSet" type="ns18:IdResponseType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="VarValueType">
+        <xsd:sequence>
+          <xsd:element name="VarId" type="xsd:string"/>
+          <xsd:element name="VarValue" type="xsd:string"/>
+          <xsd:element name="MachineId" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="VarValueResponseType">
+        <xsd:sequence>
+          <xsd:element name="VarId" type="xsd:string"/>
+          <xsd:element name="MachineId" type="xsd:string"/>
+          <xsd:element name="VarValue" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Errors" type="ns18:ErrorType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SubscriptionResultType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="EventNotifications" type="ns18:EventContextNotificationType"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="UserNotifications" type="ns18:VariableContextNotificationType"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Errors" type="ns18:ErrorType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="NodeKindResponseType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Nodes" type="ns18:NodeType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="VariableContextNotificationType">
+        <xsd:sequence>
+          <xsd:element name="ContextId" type="xsd:string"/>
+          <xsd:element name="Variable" type="ns18:VarValueResponseType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="EventContextNotificationType">
+        <xsd:sequence>
+          <xsd:element name="ContextId" type="xsd:string"/>
+          <xsd:element name="Event" type="ns18:EventValueType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="EventValueType">
+        <xsd:sequence>
+          <xsd:element name="EventId" type="xsd:string"/>
+          <xsd:element name="DeviceId" type="xsd:string"/>
+          <xsd:element name="EventValue" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Errors" type="ns18:ErrorType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="CallFunctionType">
+        <xsd:sequence>
+          <xsd:element name="FunctionId" type="xsd:string"/>
+          <xsd:element maxOccurs="unbounded" name="Parameters" type="xsd:string"/>
+          <xsd:element name="MachineId" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="CallFunctionResponseType">
+        <xsd:sequence>
+          <xsd:element name="return" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="AddNewUserType">
+        <xsd:sequence>
+          <xsd:element name="UserName" type="xsd:string"/>
+          <xsd:element name="UserPassword" type="xsd:string"/>
+          <xsd:element name="IsUIEditable" type="xsd:boolean"/>
+          <xsd:element minOccurs="1" maxOccurs="unbounded" name="Roles" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="AddNewRoleType">
+        <xsd:sequence>
+          <xsd:element name="RoleName" type="xsd:string"/>
+          <xsd:element maxOccurs="unbounded" name="RightIdSet" type="ns18:AssignRightType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ModifyUserType">
+        <xsd:sequence>
+          <xsd:element name="UserId" type="xsd:int"/>
+          <xsd:element name="NewUserName" type="xsd:string"/>
+          <xsd:element name="NewUserPassword" type="xsd:string"/>
+          <xsd:element name="IsUIEditable" type="xsd:boolean"/>
+          <xsd:element minOccurs="1" maxOccurs="unbounded" name="NewRoles" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ModifyRoleType">
+        <xsd:sequence>
+          <xsd:element name="RoleId" type="xsd:int"/>
+          <xsd:element maxOccurs="unbounded" name="NewRightSet" type="ns18:AssignRightType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="GetAllUsersResponseType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Users" type="ns18:UserType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="GetAllRolesResponseType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Roles" type="ns18:RoleType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="GetAllRightsResponseType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Rights" type="ns18:RightType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="UserType">
+        <xsd:sequence>
+          <xsd:element name="UserId" type="xsd:int"/>
+          <xsd:element name="UserName" type="xsd:string"/>
+          <xsd:element name="IsUIEditable" type="xsd:boolean"/>
+          <xsd:element name="UserStatus" type="xsd:string"/>
+          <xsd:element minOccurs="1" maxOccurs="unbounded" name="Role" type="ns18:RoleType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="RoleType">
+        <xsd:sequence>
+          <xsd:element name="RoleId" type="xsd:int"/>
+          <xsd:element name="RoleName" type="xsd:string"/>
+          <xsd:element maxOccurs="unbounded" name="Rights" type="ns18:RightType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="RightType">
+        <xsd:sequence>
+          <xsd:element name="RightId" type="xsd:int"/>
+          <xsd:element name="Node" type="ns18:NodeType"/>
+          <xsd:element name="RightLevel" type="ns18:RightKindType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="NodeType">
+        <xsd:sequence>
+          <xsd:element name="NodeId" type="xsd:string"/>
+          <xsd:element name="MachineId" type="xsd:string"/>
+          <xsd:element name="NodeName" type="xsd:string"/>
+          <xsd:element name="NodeKind" type="ns18:NodeKindType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="AssignRightType">
+        <xsd:sequence>
+          <xsd:element name="NodeId" type="xsd:string"/>
+          <xsd:element name="MachineId" type="xsd:string"/>
+          <xsd:element name="RightLevel" type="ns18:RightKindType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="UnsubscriptionType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="VarSubscriptions" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="EventSubscriptions" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="UnsubscriptionResponseType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="1" name="VarSubscriptions" type="ns18:IdSetResponseType"/>
+          <xsd:element minOccurs="0" maxOccurs="1" name="EventSubscriptions" type="ns18:IdSetResponseType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SubscriptionType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="UserSubscription" type="ns18:SubscribeItemVariableType"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="EventSubscription" type="ns18:SubscribeItemEventType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SubscriptionResponseType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="VarSubscription" type="ns18:SubscribeItemResponseType"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="EventSubscription" type="ns18:SubscribeItemResponseType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SubscribeItemVariableType">
+        <xsd:sequence>
+          <xsd:element name="ContextId" type="xsd:string"/>
+          <xsd:element name="Variable" type="ns18:VarSubscribeType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SubscribeItemEventType">
+        <xsd:sequence>
+          <xsd:element name="ContextId" type="xsd:string"/>
+          <xsd:element name="MaschineId" type="xsd:string"/>
+          <xsd:element name="EventId" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SubscribeItemResponseType">
+        <xsd:sequence>
+          <xsd:element name="ContextId" type="xsd:string"/>
+          <xsd:element name="ItemId" type="xsd:string"/>
+          <xsd:element name="MaschineId" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Errors" type="ns18:ErrorType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="VarSubscribeType">
+        <xsd:sequence>
+          <xsd:element name="VarId" type="xsd:string"/>
+          <xsd:element name="MaschineId" type="xsd:string"/>
+          <xsd:element name="Prefrences" type="ns18:SubscribePrefrencesType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="EventSubscribeType">
+        <xsd:sequence>
+          <xsd:element maxOccurs="unbounded" name="EventIdSet" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="EventSubscribeResponseType">
+        <xsd:sequence>
+          <xsd:element name="EventIdSet" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Errors" type="ns18:ErrorType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SubscribePrefrencesType">
+        <xsd:sequence>
+          <xsd:element name="TolleranceIntervall" type="xsd:long"/>
+          <xsd:element name="TolleranceRange" type="xsd:double"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="IdTuple">
+        <xsd:sequence>
+          <xsd:element name="MachineId" type="xsd:string"/>
+          <xsd:element name="ElementId" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="GetMachinesResponseType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Machines" type="ns18:MachineType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="MachineType">
+        <xsd:sequence>
+          <xsd:element name="Name" type="xsd:string"/>
+          <xsd:element name="Id" type="xsd:string"/>
+          <xsd:element name="ConnectionStatus" type="ns18:ConnectionEnum"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="UserConfigType">
+        <xsd:sequence>
+          <xsd:element name="OwnerId" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Groups" type="ns11:PageGroupSetType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="PageGroupSetType">
+        <xsd:sequence>
+          <xsd:element name="Title" type="xsd:string"/>
+          <xsd:element name="Index" type="xsd:int"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Pages" type="ns11:PageConfigType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="PageConfigType">
+        <xsd:sequence>
+          <xsd:element name="Id" type="xsd:string"/>
+          <xsd:element name="Title" type="xsd:string"/>
+          <xsd:element name="ConfigXML" type="xsd:string"/>
+          <xsd:element name="CreatorId" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="NewPageConfigType">
+        <xsd:sequence>
+          <xsd:element name="Title" type="xsd:string"/>
+          <xsd:element name="ConfigXML" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ModifyUserConfigType">
+        <xsd:sequence>
+          <xsd:element name="OwnerId" type="xsd:string"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Groups" type="ns11:ModifyPageGroupSetType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ModifyPageGroupSetType">
+        <xsd:sequence>
+          <xsd:element name="Title" type="xsd:string"/>
+          <xsd:element name="Index" type="xsd:int"/>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="Pages" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ConnectionAdmin">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="loginInformation" nillable="true" type="ns18:LoginInformationType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Disconnect">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="AddNewUser">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="user" nillable="true" type="ns18:AddNewUserType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="AddNewRole">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="role" nillable="true" type="ns18:AddNewRoleType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="DeleteRole">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="roleId" nillable="true" type="xsd:int"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetAllRights">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetAllUsers">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="DeleteUser">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="userId" nillable="true" type="xsd:int"/>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ModifyRole">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="modifyRole" nillable="true" type="ns18:ModifyRoleType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Unsubscribe">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="unsubscribeItems" nillable="true" type="ns18:UnsubscriptionType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetAllRoles">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="CallFunction">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="functionCall" nillable="true" type="ns18:CallFunctionType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Connection">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="loginInformation" nillable="true" type="ns18:LoginInformationType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetAllNodes">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="WriteVariableSet">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="writeVarSet" nillable="true" type="ns18:VarValuesInteractType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ModifyUser">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="modifyUser" nillable="true" type="ns18:ModifyUserType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Subscribe">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="subscriptions" nillable="true" type="ns18:SubscriptionType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ReadVariableSet">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+            <xsd:element form="unqualified" name="readVarIdSet" nillable="true" type="ns18:IdSetType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="PublicRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="auth" nillable="true" type="ns18:ConnectionAuthType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ConnectionAdminResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="result" nillable="true" type="ns18:LoginInformationResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="DisconnectResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="AddNewUserResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="AddNewRoleResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="DeleteRoleResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetAllRightsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="rights" nillable="true" type="ns18:GetAllRightsResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetAllUsersResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="users" nillable="true" type="ns18:GetAllUsersResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="DeleteUserResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ModifyRoleResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="UnsubscribeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+            <xsd:element form="unqualified" name="unsubscribeItemsInformation" nillable="true" type="ns18:UnsubscriptionResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetAllRolesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="roles" nillable="true" type="ns18:GetAllRolesResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="CallFunctionResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="functionReturn" nillable="true" type="ns18:CallFunctionResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ConnectionResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="result" nillable="true" type="ns18:LoginInformationResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetAllNodesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="GetAllNodesResponse" nillable="true" type="ns18:NodeKindResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="WriteVariableSetResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="writeVarSetInformations" nillable="true" type="ns18:VarValuesResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ModifyUserResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="SubscribeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="subscriptionInformation" nillable="true" type="ns18:SubscriptionResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ReadVariableSetResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="readVarSetResult" nillable="true" type="ns18:VarValuesResponseType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="PublicRequestResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element form="unqualified" name="notifications" nillable="true" type="ns18:SubscriptionResultType"/>
+            <xsd:element form="unqualified" name="errors" nillable="true" type="ns18:ErrorResponseType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="AddNewRoleRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="role" type="tns:AddNewRoleType"/>
+  </wsdl:message>
+  <wsdl:message name="CallFunctionRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="functionCall" type="tns:CallFunctionType"/>
+  </wsdl:message>
+  <wsdl:message name="AddNewUserRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="user" type="tns:AddNewUserType"/>
+  </wsdl:message>
+  <wsdl:message name="CallFunctionResponse">
+    <wsdl:part name="functionReturn" type="tns:CallFunctionResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ConnectionRequest">
+    <wsdl:part name="loginInformation" type="tns:LoginInformationType"/>
+  </wsdl:message>
+  <wsdl:message name="SubscribeRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="subscriptions" type="tns:SubscriptionType"/>
+  </wsdl:message>
+  <wsdl:message name="PublicRequestResponse">
+    <wsdl:part name="notifications" type="tns:SubscriptionResultType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ModifyRoleResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ConnectionResponse">
+    <wsdl:part name="result" type="tns:LoginInformationResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="WriteVariableSetRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="writeVarSet" type="tns:VarValuesInteractType"/>
+  </wsdl:message>
+  <wsdl:message name="DeleteRoleResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="PublicRequestRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+  </wsdl:message>
+  <wsdl:message name="GetAllRightsRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+  </wsdl:message>
+  <wsdl:message name="UnsubscribeResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+    <wsdl:part name="unsubscribeItemsInformation" type="tns:UnsubscriptionResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="GetAllRolesResponse">
+    <wsdl:part name="roles" type="tns:GetAllRolesResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="AddNewRoleResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="GetAllNodesResponse">
+    <wsdl:part name="GetAllNodesResponse" type="tns:NodeKindResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="DeleteUserRequest">
+    <wsdl:part name="userId" type="xsd:int"/>
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+  </wsdl:message>
+  <wsdl:message name="GetAllNodesRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+  </wsdl:message>
+  <wsdl:message name="AddNewUserResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="GetAllUsersRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+  </wsdl:message>
+  <wsdl:message name="WriteVariableSetResponse">
+    <wsdl:part name="writeVarSetInformations" type="tns:VarValuesResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ReadVariableSetResponse">
+    <wsdl:part name="readVarSetResult" type="tns:VarValuesResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="SubscribeResponse">
+    <wsdl:part name="subscriptionInformation" type="tns:SubscriptionResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="GetAllUsersResponse">
+    <wsdl:part name="users" type="tns:GetAllUsersResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="DeleteRoleRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="roleId" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="ConnectionAdminResponse">
+    <wsdl:part name="result" type="tns:LoginInformationResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="GetAllRolesRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+  </wsdl:message>
+  <wsdl:message name="DeleteUserResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ModifyUserRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="modifyUser" type="tns:ModifyUserType"/>
+  </wsdl:message>
+  <wsdl:message name="UnsubscribeRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="unsubscribeItems" type="tns:UnsubscriptionType"/>
+  </wsdl:message>
+  <wsdl:message name="DisconnectRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+  </wsdl:message>
+  <wsdl:message name="GetAllRightsResponse">
+    <wsdl:part name="rights" type="tns:GetAllRightsResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ReadVariableSetRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="readVarIdSet" type="tns:IdSetType"/>
+  </wsdl:message>
+  <wsdl:message name="DisconnectResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ModifyUserResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ModifyRoleRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="modifyRole" type="tns:ModifyRoleType"/>
+  </wsdl:message>
+  <wsdl:message name="ConnectionAdminRequest">
+    <wsdl:part name="loginInformation" type="tns:LoginInformationType"/>
+  </wsdl:message>
+  <wsdl:message name="GetMachinesRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+  </wsdl:message>
+  <wsdl:message name="GetMachinesResponse">
+    <wsdl:part name="Machines" type="tns:GetMachinesResponseType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ModifyUserPageConfigRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="NewConfig" type="tns:ModifyUserConfigType"/>
+  </wsdl:message>
+  <wsdl:message name="ModifyUserPageConfigResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="GetUserPageConfigRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+  </wsdl:message>
+  <wsdl:message name="GetUserPageConfigResponse">
+    <wsdl:part name="Config" type="tns:UserConfigType"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="ModifyPageRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="Page" type="tns:PageConfigType"/>
+  </wsdl:message>
+  <wsdl:message name="ModifyPageResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="DeletePageRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="PageId" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="DeletePageResponse">
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:message name="AddPageRequest">
+    <wsdl:part name="auth" type="tns:ConnectionAuthType"/>
+    <wsdl:part name="NewPage" type="tns:NewPageConfigType"/>
+  </wsdl:message>
+  <wsdl:message name="AddPageResponse">
+    <wsdl:part name="PageId" type="xsd:string"/>
+    <wsdl:part name="errors" type="tns:ErrorResponseType"/>
+  </wsdl:message>
+  <wsdl:portType name="EvergreenPortType">
+    <wsdl:operation name="Connection">
+      <wsdl:input message="tns:ConnectionRequest"/>
+      <wsdl:output message="tns:ConnectionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ConnectionAdmin">
+      <wsdl:input message="tns:ConnectionAdminRequest"/>
+      <wsdl:output message="tns:ConnectionAdminResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="Disconnect">
+      <wsdl:input message="tns:DisconnectRequest"/>
+      <wsdl:output message="tns:DisconnectResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="PublicRequest">
+      <wsdl:input message="tns:PublicRequestRequest"/>
+      <wsdl:output message="tns:PublicRequestResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ReadVariableSet">
+      <wsdl:input message="tns:ReadVariableSetRequest"/>
+      <wsdl:output message="tns:ReadVariableSetResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="WriteVariableSet">
+      <wsdl:input message="tns:WriteVariableSetRequest"/>
+      <wsdl:output message="tns:WriteVariableSetResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="CallFunction">
+      <wsdl:input message="tns:CallFunctionRequest"/>
+      <wsdl:output message="tns:CallFunctionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="AddNewUser">
+      <wsdl:input message="tns:AddNewUserRequest"/>
+      <wsdl:output message="tns:AddNewUserResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteUser">
+      <wsdl:input message="tns:DeleteUserRequest"/>
+      <wsdl:output message="tns:DeleteUserResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="AddNewRole">
+      <wsdl:input message="tns:AddNewRoleRequest"/>
+      <wsdl:output message="tns:AddNewRoleResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteRole">
+      <wsdl:input message="tns:DeleteRoleRequest"/>
+      <wsdl:output message="tns:DeleteRoleResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyUser">
+      <wsdl:input message="tns:ModifyUserRequest"/>
+      <wsdl:output message="tns:ModifyUserResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyRole">
+      <wsdl:input message="tns:ModifyRoleRequest"/>
+      <wsdl:output message="tns:ModifyRoleResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllUsers">
+      <wsdl:input message="tns:GetAllUsersRequest"/>
+      <wsdl:output message="tns:GetAllUsersResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRoles">
+      <wsdl:input message="tns:GetAllRolesRequest"/>
+      <wsdl:output message="tns:GetAllRolesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRights">
+      <wsdl:input message="tns:GetAllRightsRequest"/>
+      <wsdl:output message="tns:GetAllRightsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="Subscribe">
+      <wsdl:input message="tns:SubscribeRequest"/>
+      <wsdl:output message="tns:SubscribeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="Unsubscribe">
+      <wsdl:input message="tns:UnsubscribeRequest"/>
+      <wsdl:output message="tns:UnsubscribeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllNodes">
+      <wsdl:input message="tns:GetAllNodesRequest"/>
+      <wsdl:output message="tns:GetAllNodesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetMachines">
+      <wsdl:input message="tns:GetMachinesRequest"/>
+      <wsdl:output message="tns:GetMachinesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyUserPageConfig">
+      <wsdl:input message="tns:ModifyUserPageConfigRequest"/>
+      <wsdl:output message="tns:ModifyUserPageConfigResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserPageConfig">
+      <wsdl:input message="tns:GetUserPageConfigRequest"/>
+      <wsdl:output message="tns:GetUserPageConfigResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyPage">
+      <wsdl:input message="tns:ModifyPageRequest"/>
+      <wsdl:output message="tns:ModifyPageResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="DeletePage">
+      <wsdl:input message="tns:DeletePageRequest"/>
+      <wsdl:output message="tns:DeletePageResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="AddPage">
+      <wsdl:input message="tns:AddPageRequest"/>
+      <wsdl:output message="tns:AddPageResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EvergreenBinding" type="tns:EvergreenPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+    <wsdl:operation name="Connection">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/Connection"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConnectionAdmin">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/ConnectionAdmin"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Disconnect">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/Disconnect"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PublicRequest">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/PublicRequest"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReadVariableSet">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/ReadVariableSet"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WriteVariableSet">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/WriteVariableSet"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CallFunction">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/CallFunction"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddNewUser">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/AddNewUser"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteUser">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/DeleteUser"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddNewRole">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/AddNewRole"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteRole">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/DeleteRole"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyUser">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/ModifyUser"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyRole">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/ModifyRole"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllUsers">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/GetAllUsers"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRoles">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/GetAllRoles"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRights">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/GetAllRights"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Subscribe">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/Subscribe"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Unsubscribe">
+      <soap:operation soapAction="http://localhost/EvergreenWebService/Unsubscribe"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllNodes">
+      <soap:operation soapAction="http://www.evergreen-project.com/web-service/1.0/GetAllNodes"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMachines">
+      <soap:operation soapAction="http://www.evergreen-project.com/web-service/1.0/GetMachines"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyUserPageConfig">
+      <soap:operation soapAction="http://www.evergreen-project.com/web-service/1.0/ModifyUserPageConfig"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserPageConfig">
+      <soap:operation soapAction="http://www.evergreen-project.com/web-service/1.0/GetUserPageConfig"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyPage">
+      <soap:operation soapAction="http://www.evergreen-project.com/web-service/1.0/ModifyPage"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeletePage">
+      <soap:operation soapAction="http://www.evergreen-project.com/web-service/1.0/DeletePage"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddPage">
+      <soap:operation soapAction="http://www.evergreen-project.com/web-service/1.0/AddPage"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.evergreen-project.com/web-service/1.0"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EvergreenWebService">
+    <wsdl:port name="EvergreenBinding" binding="tns:EvergreenBinding">
+      <soap:address location="http://192.168.178.58:18083/malso/services/EvergreenWebService/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

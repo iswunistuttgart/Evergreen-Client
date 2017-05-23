@@ -6,15 +6,36 @@ class Widget extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      configureFlag: false
+      configureFlag: false,
     }
   }
 
   componentDidMount() {}
 
+  setWidgetHandle() {
+    this.setState({configureFlag: false});
+    if (this.refs['subscribe'].checked) {
+      this.props.subscribe({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value});
+    } else {
+      this.props.readVariable({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value})
+    }
+
+    // if (this.props.value) {
+    //   this.props.write({})
+    // }
+  }
+
+  handleInputValueChange = (event) => {
+    this.props.valueChange(event.target.value, this.props.id);
+  }
+
+  handleCheckValueChange = (event) => {
+    this.props.valueChange(event.target.checked, this.props.id)
+  }
+
   render() {
     return (
-      <ul className="list-group">
+      <ul className="list-group widget-group">
         <li className="list-group-item">
           <div className="handleGroupname">
             <div>
@@ -29,24 +50,28 @@ class Widget extends Component {
               <div className="WidgetButton">
                 Graph
               </div>
-              <SimpleLineChart />
+              <SimpleLineChart data={this.props.valueArray} />
             </div>
           }
           {this.props.widgetType === 'toggle' &&
-            <div>
+            <div className="css-switch">
               <div className="WidgetButton">
                 Toggle Button
               </div>
-              <div className="switch round large">
-                <input id="exampleRadioSwitch3" type="radio" name="testGroup"/>
-                <label htmlFor="exampleRadioSwitch3"></label>
-              </div>
+              <label className="switch">
+                <input type="checkbox" checked={this.props.value && this.props.value != 'false'} onChange={this.handleCheckValueChange}/>
+                <div className="slider-switch round"></div>
+              </label>
             </div>
           }
           {this.props.widgetType === 'lamp' &&
             <div className="LED">
               LED
-              <div className="circle"></div>
+              {(!this.props.value || this.props.value == 'false') ?
+                  <div className="circle"></div>
+                : <div className="circle" style={{backgroundColor: 'green'}}></div>
+              }
+
             </div>
           }
           {this.props.widgetType === 'inputfield' &&
@@ -54,7 +79,7 @@ class Widget extends Component {
               <div className="WidgetButton">
                 Inputfield
               </div>
-              <input type="search" placeholder="Value"/>
+              <input type="search" value={this.props.value} onChange={this.handleInputValueChange} placeholder="Value"/>
             </div>
           }
           {this.props.widgetType === 'outputfield' &&
@@ -62,7 +87,7 @@ class Widget extends Component {
               <div className="WidgetButton">
                 Outputfield
               </div>
-              <input type="search" placeholder="Value"/>
+              <input type="search" value={this.props.value} placeholder="Value" disabled/>
             </div>
           }
         </li>
@@ -82,7 +107,7 @@ class Widget extends Component {
                 <div className="larger-12 columns">
 
                   <label>Select machine
-                    <select>
+                    <select ref="selectMachine">
                       {
                         (this.props.names && this.props.names.length) ? this.props.names.map((entry) => {
                           return (
@@ -95,7 +120,7 @@ class Widget extends Component {
                     </select>
                   </label>
                   <label>Bind value
-                    <select>
+                    <select ref="bindValue">
                       {
                         (this.props.nodes && this.props.nodes.length) ? this.props.nodes.map((entry) => {
                           return (
@@ -108,13 +133,13 @@ class Widget extends Component {
                     </select>
                   </label>
                   <label>Update intervall in milliseconds
-                    <input type="number" defaultValue="5"/>
+                    <input type="number" defaultValue="5" ref="tolleranceInterval"/>
                   </label>
-                  <input type="checkbox"/>
+                  <input type="checkbox" ref="subscribe"/>
                   <label htmlFor="checkbox2">Activate Subscribe (Dataupdate)</label>
                 </div>
               </div>
-              <button className="button expanded" onClick={() => {this.setState({configureFlag: false})}}>Set Widget</button>
+              <button className="button expanded" onClick={() => {this.setWidgetHandle()}}>Set Widget</button>
             </form>
           </div>
         }

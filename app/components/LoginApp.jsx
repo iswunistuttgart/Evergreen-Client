@@ -15,7 +15,7 @@ class LoginApp extends Component {
   }
 
   componentWillMount() {
-    axios.get('readserverlist')
+    axios.post('/rest/server/read')
       .then((result) => {
         this.setState({
           servers: result.data.serverlist,
@@ -31,7 +31,7 @@ class LoginApp extends Component {
   }
 
   refreshServers = () => {
-    axios.get('readserverlist')
+    axios.post('/rest/server/read')
       .then((result) => {
         this.setState({servers: result.data.serverlist, selected: result.data.serverlist[0]})
       })

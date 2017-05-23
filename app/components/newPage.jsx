@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import Widget from './Widget';
+const io = require('socket.io-client');
+const socket = io();
 
 class newPage extends Component {
 
@@ -15,7 +17,56 @@ class newPage extends Component {
   }
 
   componentDidMount() {
-    axios.post('/getMachineNames', {session: window.sessionStorage.getItem("session")})
+
+    socket.on('subscription_result', (socketData) => {
+      if (Object.prototype.toString.call( socketData.response.notifications.UserNotifications ) === '[object Object]') {
+        if (parseInt(socketData.response.notifications.UserNotifications.ContextId) <= this.state.widgets.length - 1) {
+          let tempMs;
+          if (this.state.widgets[socketData.response.notifications.UserNotifications.ContextId].valueArray.length === 0) {
+            tempMs = 0;
+          } else {
+            tempMs = this.state.widgets[socketData.response.notifications.UserNotifications.ContextId].valueArray[this.state.widgets[socketData.response.notifications.UserNotifications.ContextId].valueArray.length - 1].x + socketData.tolleranceInterval;
+          }
+
+          this.setState({
+            widgets: [
+              ...this.state.widgets.slice(0, parseInt(socketData.response.notifications.UserNotifications.ContextId)),
+              Object.assign({}, this.state.widgets[parseInt(socketData.response.notifications.UserNotifications.ContextId)], {
+                value: socketData.response.notifications.UserNotifications.Variable.VarValue,
+                valueArray: [...this.state.widgets[parseInt(socketData.response.notifications.UserNotifications.ContextId)].valueArray, {x: tempMs, y: parseFloat(socketData.response.notifications.UserNotifications.Variable.VarValue)}]
+              }),
+              ...this.state.widgets.slice(parseInt(socketData.response.notifications.UserNotifications.ContextId) + 1)
+            ]
+          })
+        }
+      } else {
+        socketData.response.notifications.UserNotifications.map((entry) => {
+          if (parseInt(entry.ContextId) <= this.state.widgets.length - 1) {
+            let tempMs;
+            if (this.state.widgets[entry.ContextId].valueArray.length === 0) {
+              tempMs = 0;
+            } else {
+              console.log('aaaaa', this.state.widgets[entry.ContextId].valueArray);
+              tempMs = this.state.widgets[entry.ContextId].valueArray[this.state.widgets[entry.ContextId].valueArray.length - 1].x + socketData.tolleranceInterval;
+            }
+
+            this.setState({
+              widgets: [
+                ...this.state.widgets.slice(0, parseInt(entry.ContextId)),
+                Object.assign({}, this.state.widgets[parseInt(entry.ContextId)], {
+                  value: entry.Variable.VarValue,
+                  valueArray: [...this.state.widgets[parseInt(entry.ContextId)].valueArray, {x: tempMs, y: parseFloat(entry.Variable.VarValue)}]
+                }),
+                ...this.state.widgets.slice(parseInt(entry.ContextId) + 1)
+              ]
+            })
+          }
+        })
+      }
+
+    })
+
+    axios.post('/rest/machine/get', {session: window.sessionStorage.getItem("session")})
       .then((result) => {
         if (result.data.Machines && Object.prototype.toString.call( result.data.Machines ) === '[object Object]') {
           this.setState({
@@ -31,7 +82,7 @@ class newPage extends Component {
         console.error('aa', e);
       })
 
-    axios.post('/getAllNodes', {session: window.sessionStorage.getItem("session")})
+    axios.post('/rest/node/get', {session: window.sessionStorage.getItem("session")})
       .then((result) => {
         if (result.data.GetAllNodesResponse.Nodes && Object.prototype.toString.call( result.data.GetAllNodesResponse.Nodes ) === '[object Object]') {
           this.setState({
@@ -50,8 +101,48 @@ class newPage extends Component {
 
   addWidget = () => {
     this.setState({
-      widgets: [...this.state.widgets, {widgetType: this.state.widgetselect}]
+      widgets: [...this.state.widgets, {widgetType: this.state.widgetselect, value: '', valueArray: []}]
     })
+  }
+
+  subscribe = (obj) => {
+    axios.post('/rest/subscribe/create', Object.assign({}, obj, {session: window.sessionStorage.getItem("session")}))
+      .then((result) => {
+        socket.emit('subscribe', {contextId: obj.contextId, tolleranceInterval: parseInt(obj.tolleranceInterval), session: window.sessionStorage.getItem("session")});
+      })
+      .catch((e) => {
+        console.error('bb', e);
+      })
+  }
+
+  readVariable = (obj) => {
+    axios.post('/rest/subscribe/read', Object.assign({}, obj, {session: window.sessionStorage.getItem("session")}))
+      .then((result) => {
+        let tempMs;
+        console.log('aa', this.state.widgets, obj)
+
+        if (this.state.widgets[obj.contextId].valueArray.length === 0) {
+          tempMs = 0;
+        } else {
+          tempMs = this.state.widgets[obj.contextId].valueArray[this.state.widgets[obj.contextId].valueArray.length - 1].x + 500;
+        }
+
+        console.log('ss');
+
+        this.setState({
+          widgets: [
+            ...this.state.widgets.slice(0, obj.contextId),
+            Object.assign({}, this.state.widgets[obj.contextId], {
+              value: result.data.readVarSetResult.VarValues.VarValue,
+              valueArray: [...this.state.widgets[obj.contextId].valueArray, {x: tempMs, y: result.data.readVarSetResult.VarValues.VarValue}]
+            }),
+            ...this.state.widgets.slice(obj.contextId + 1)
+          ]
+        })
+      })
+      .catch((e) => {
+        console.error('bb', e);
+      })
   }
 
   handleInputChange = (event) => {
@@ -62,6 +153,26 @@ class newPage extends Component {
     this.setState({
       [name]: value
     });
+  }
+
+  handleValueChange = (value, index) => {
+    let tempMs;
+    if (this.state.widgets[index].valueArray.length === 0) {
+      tempMs = 0;
+    } else {
+      tempMs = this.state.widgets[index].valueArray[this.state.widgets[index].valueArray.length - 1].x + 500;
+    }
+
+    this.setState({
+      widgets: [
+        ...this.state.widgets.slice(0, index),
+        Object.assign({}, this.state.widgets[index], {
+          value: value,
+          valueArray: [...this.state.widgets[parseInt(index)].valueArray, {x: tempMs, y: value}]
+        }),
+        ...this.state.widgets.slice(index + 1)
+      ]
+    })
   }
 
   render() {
@@ -99,7 +210,7 @@ class newPage extends Component {
           {/* <pre>{JSON.stringify(this.state, false, 2)}</pre> */}
           {this.state.widgets.map((entry, key) => {
             return (
-              <Widget key={key} widgetType={entry.widgetType} names={this.state.names} nodes={this.state.nodes}/>
+              <Widget key={key} id={key} subscribe={this.subscribe} valueChange={this.handleValueChange} readVariable={this.readVariable} widgetType={entry.widgetType} names={this.state.names} nodes={this.state.nodes} value={entry.value} valueArray={entry.valueArray}/>
             )
           })
           }
