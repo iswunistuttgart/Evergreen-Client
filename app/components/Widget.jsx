@@ -7,23 +7,32 @@ class Widget extends Component {
     super(props);
     this.state = {
       configureFlag: false,
+      renameFlag: false
     }
   }
 
   componentDidMount() {}
 
   setWidgetHandle() {
-    this.setState({configureFlag: false});
+    this.setState({configureFlag: false}, () => {
+      this.props.pageUpdate();
+    });
     if (this.refs['subscribe'].checked) {
-      this.props.subscribe({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value});
+      this.props.subscribe({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval});
+      if (this.props.widgetType === 'toggle') {
+        let temp = (!this.props.value || this.props.value === 'false' || this.props.value === '0') ? 'false' : 'true';
+        this.props.writeVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval, varValue: temp})
+      } else if ((this.props.value || this.props.value !== false || this.props.value !== '0' || this.props.value !== 0) && this.props.widgetType === 'inputfield') {
+        this.props.writeVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval, varValue: this.props.value})
+      }
     } else {
       if (this.props.widgetType === 'toggle') {
         let temp = (!this.props.value || this.props.value === 'false' || this.props.value === '0') ? 'false' : 'true';
-        this.props.writeVariable({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value, varValue: temp})
+        this.props.writeVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval, varValue: temp})
       } else if ((this.props.value || this.props.value !== false || this.props.value !== '0' || this.props.value !== 0) && this.props.widgetType === 'inputfield') {
-        this.props.writeVariable({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value, varValue: this.props.value})
+        this.props.writeVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval, varValue: this.props.value})
       } else {
-        this.props.readVariable({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value})
+        this.props.readVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval})
       }
     }
   }
@@ -36,17 +45,50 @@ class Widget extends Component {
     this.props.valueChange(event.target.checked, this.props.id)
   }
 
+  handleConfigValueChange = (event) => {
+    let newObj = {};
+    newObj[event.target.name] = event.target.value;
+
+    this.props.setConfig(Object.assign({}, this.props.config, newObj), this.props.id)
+  }
+
+  handleConfigCheckChange = (event) => {
+
+    let newObj = {};
+    newObj[event.target.name] = event.target.checked;
+
+    this.props.setConfig(Object.assign({}, this.props.config, newObj), this.props.id)
+  }
+
+  renameHandler = () => {
+    let title = this.refs['renameInput'].value;
+    if (title) {
+      this.props.setTitle(title, this.props.id);
+      this.setState({renameFlag: false})
+    }
+  }
+
   render() {
     return (
       <ul className="list-group widget-group">
         <li className="list-group-item">
           <div className="handleGroupname">
-            <div>
+            <button onClick={() => {this.setState({renameFlag: true})}}>
               Rename
-            </div>
-            <div>
+            </button>
+            <button onClick={() => {this.props.delete(this.props.keyindex, this.props.id)}}>
               Delete
-            </div>
+            </button>
+          </div>
+          <div className="widget-name">
+            { this.state.renameFlag ?
+              <div>
+                <input ref={`renameInput`} type="text" defaultValue={this.props.title}/>
+                <button type="submit" onClick={() => this.renameHandler()}>Save</button>
+              </div>
+              :
+              <span>{this.props.title}</span>
+            }
           </div>
           {this.props.widgetType === 'graph' &&
             <div>
@@ -110,7 +152,8 @@ class Widget extends Component {
                 <div className="larger-12 columns">
 
                   <label>Select machine
-                    <select ref="selectMachine">
+                    <select ref="selectMachine" value={this.props.config.machineId} name="machineId" onChange={this.handleConfigValueChange}>
+                      <option value="">Choose</option>
                       {
                         (this.props.names && this.props.names.length) ? this.props.names.map((entry) => {
                           return (
@@ -123,7 +166,8 @@ class Widget extends Component {
                     </select>
                   </label>
                   <label>Bind value
-                    <select ref="bindValue">
+                    <select ref="bindValue" value={this.props.config.varId} name="varId" onChange={this.handleConfigValueChange}>
+                      <option value="">Choose</option>
                       {
                         (this.props.nodes && this.props.nodes.length) ? this.props.nodes.map((entry) => {
                           return (
@@ -136,9 +180,9 @@ class Widget extends Component {
                     </select>
                   </label>
                   <label>Update intervall in milliseconds
-                    <input type="number" defaultValue="5" ref="tolleranceInterval"/>
+                    <input type="number" value={this.props.config.tolleranceInterval} ref="tolleranceInterval" name="tolleranceInterval" onChange={this.handleConfigValueChange}/>
                   </label>
-                  <input type="checkbox" ref="subscribe"/>
+                  <input type="checkbox" checked={this.props.config.isSubscribe} ref="subscribe" name="isSubscribe" onChange={this.handleConfigCheckChange}/>
                   <label htmlFor="checkbox2">Activate Subscribe (Dataupdate)</label>
                 </div>
               </div>

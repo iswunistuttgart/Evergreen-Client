@@ -19,7 +19,7 @@ class SimpleLineChart extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.value !== nextProps.value) {
-      this.areaChartInstance.push([{y: nextProps.value, time: Date.now()}]);
+      this.areaChartInstance.push([{y: nextProps.value, time: ((new Date()).getTime() / 1000)|0}]);
     }
   }
 

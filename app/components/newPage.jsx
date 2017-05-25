@@ -3,6 +3,7 @@ import axios from 'axios';
 import Widget from './Widget';
 const io = require('socket.io-client');
 const socket = io();
+import AsyncWaterfall from 'async-waterfall';
 
 class newPage extends Component {
 
@@ -20,11 +21,16 @@ class newPage extends Component {
   componentDidMount() {
 
     axios.post('/rest/page/get', {session: window.sessionStorage.getItem("session"), page: this.props.params.pageId}).then((page) => {
-      console.log('aa', page.data);
-      this.setState({
-        page: {Id: page.data.Id, Title: page.data.Title, CreatorId: page.data.CreatorId},
-        widgets: page.data.ConfigXML
-      })
+
+      if (page.data.Id) {
+        this.setState({
+          page: {Id: page.data.Id, Title: page.data.Title, CreatorId: page.data.CreatorId},
+          widgets: page.data.ConfigXML
+        }, () => {
+          this.initialSubscribe();
+        })
+      }
+
     }).catch((err) => {
       console.error('err', err);
     })
@@ -32,34 +38,42 @@ class newPage extends Component {
     socket.on('subscription_result', (socketData) => {
 
       if (socketData.response.notifications && Object.prototype.toString.call( socketData.response.notifications.UserNotifications ) === '[object Object]') {
-        if (parseInt(socketData.response.notifications.UserNotifications.ContextId) <= this.state.widgets.length - 1) {
+        // if (parseInt(socketData.response.notifications.UserNotifications.ContextId) <= this.state.widgets.length - 1) {
+        let index = this.findIndex(this.state.widgets, socketData.response.notifications.UserNotifications.ContextId)
+
+        if (index !== -1) {
           this.setState({
             widgets: [
-              ...this.state.widgets.slice(0, parseInt(socketData.response.notifications.UserNotifications.ContextId)),
-              Object.assign({}, this.state.widgets[parseInt(socketData.response.notifications.UserNotifications.ContextId)], {
+              ...this.state.widgets.slice(0, index),
+              Object.assign({}, this.state.widgets[index], {
                 value: socketData.response.notifications.UserNotifications.Variable.VarValue
               }),
-              ...this.state.widgets.slice(parseInt(socketData.response.notifications.UserNotifications.ContextId) + 1)
+              ...this.state.widgets.slice(index + 1)
             ]
           })
         }
+
+        // }
       } else {
         socketData.response.notifications.UserNotifications.map((entry) => {
-          if (parseInt(entry.ContextId) <= this.state.widgets.length - 1) {
+          // if (parseInt(entry.ContextId) <= this.state.widgets.length - 1) {
 
+          let index = this.findIndex(this.state.widgets, entry.ContextId);
+
+          if (index !== -1) {
             this.setState({
               widgets: [
-                ...this.state.widgets.slice(0, parseInt(entry.ContextId)),
-                Object.assign({}, this.state.widgets[parseInt(entry.ContextId)], {
+                ...this.state.widgets.slice(0, index),
+                Object.assign({}, this.state.widgets[index], {
                   value: entry.Variable.VarValue,
                 }),
-                ...this.state.widgets.slice(parseInt(entry.ContextId) + 1)
+                ...this.state.widgets.slice(index + 1)
               ]
             })
           }
+          // }
         })
       }
-
     })
 
     axios.post('/rest/machine/get', {session: window.sessionStorage.getItem("session")})
@@ -95,20 +109,82 @@ class newPage extends Component {
       })
   }
 
-  addWidget = () => {
-    this.setState({
-      widgets: [...this.state.widgets, {widgetType: this.state.widgetselect, value: ''}]
-    }, () => {
-      let tempString = window.btoa(JSON.stringify(this.state.widgets));
+  initialSubscribe = () => {
+    let tasks = [];
 
-      axios.post('/rest/page/update', {session: window.sessionStorage.getItem("session"), page: {Id: this.props.params.pageId, CreatorId: this.state.page.CreatorId, Title: this.state.page.Title, ConfigXML: tempString}})
-        .then((result) => {
+    this.state.widgets.map((entry) => {
+      if (entry.config.isSubscribe) {
+        let task = (callback) => {
+          let obj = {
+            contextId: entry.contextId,
+            machineId: entry.config.machineId,
+            varId: entry.config.varId,
+            tolleranceInterval: entry.config.tolleranceInterval || 200
+          }
 
-        })
-        .catch((e) => {
-          console.error('cc', e);
-        })
+          axios.post('/rest/subscribe/create', Object.assign({}, obj, {session: window.sessionStorage.getItem("session")}))
+            .then((result) => {
+              socket.emit('subscribe', {contextId: entry.contextId, tolleranceInterval: parseInt(entry.config.tolleranceInterval || 200), session: window.sessionStorage.getItem("session")}, () => {
+                console.log('emitted');
+                callback();
+              });
+            })
+            .catch((e) => {
+              console.error('bb', e);
+            })
+        }
+        tasks.push(task);
+      }
+    });
+
+    AsyncWaterfall(tasks, () => {
+      console.log('done');
     })
+  }
+
+  findIndex = (array, contextId) => {
+    let tempContextId = parseInt(contextId);
+    let index = -1;
+
+    array.map((entry, key) => {
+      if (entry.contextId === tempContextId) {
+        index = key;
+      }
+    })
+
+    return index;
+  }
+
+  addWidget = () => {
+
+    let tempIndex = 1;
+
+    if (this.state.widgets && this.state.widgets.length) {
+      this.state.widgets.map((entry) => {
+        if (entry.contextId > tempIndex) {
+          tempIndex = entry.contextId;
+        }
+      })
+      tempIndex ++;
+    }
+
+    this.setState({
+      widgets: [...this.state.widgets, {contextId: tempIndex, widgetType: this.state.widgetselect, value: '', config: {machineId: '', varId: '', tolleranceInterval: '', isSubscribe: false}, name: ''}]
+    }, () => {
+      this.pageUpdate();
+    })
+  }
+
+  pageUpdate = () => {
+    let tempString = window.btoa(JSON.stringify(this.state.widgets));
+
+    axios.post('/rest/page/update', {session: window.sessionStorage.getItem("session"), page: {Id: this.props.params.pageId, CreatorId: this.state.page.CreatorId, Title: this.state.page.Title, ConfigXML: tempString}})
+      .then((result) => {
+
+      })
+      .catch((e) => {
+        console.error('cc', e);
+      })
   }
 
   subscribe = (obj) => {
@@ -125,34 +201,57 @@ class newPage extends Component {
     axios.post('/rest/subscribe/read', Object.assign({}, obj, {session: window.sessionStorage.getItem("session")}))
       .then((result) => {
 
-        this.setState({
-          widgets: [
-            ...this.state.widgets.slice(0, obj.contextId),
-            Object.assign({}, this.state.widgets[obj.contextId], {
-              value: result.data.readVarSetResult.VarValues.VarValue,
-            }),
-            ...this.state.widgets.slice(obj.contextId + 1)
-          ]
-        })
+        setTimeout(() => {
+
+          let index = this.findIndex(this.state.widgets, obj.contextId);
+
+          if (index !== -1) {
+            this.setState({
+              widgets: [
+                ...this.state.widgets.slice(0, index),
+                Object.assign({}, this.state.widgets[index], {
+                  value: result.data.readVarSetResult.VarValues.VarValue,
+                }),
+                ...this.state.widgets.slice(index + 1)
+              ]
+            })
+          }
+        }, 200)
       })
       .catch((e) => {
         console.error('bb', e);
       })
   }
 
+  deletePage = (index, contextId) => {
+    this.setState({
+      widgets: [
+        ...this.state.widgets.slice(0, index),
+        ...this.state.widgets.slice(index + 1)
+      ]
+    }, () => {
+      axios.post('/rest/subscribe/remove', {session: window.sessionStorage.getItem("session"), contextId: contextId})
+      this.pageUpdate();
+    })
+  }
+
   writeVariable = (obj) => {
     axios.post('/rest/subscribe/write', Object.assign({}, obj, {session: window.sessionStorage.getItem("session")}))
       .then((result) => {
 
-        this.setState({
-          widgets: [
-            ...this.state.widgets.slice(0, obj.contextId),
-            Object.assign({}, this.state.widgets[obj.contextId], {
-              value: result.data.writeVarSetInformations.VarValues.VarValue
-            }),
-            ...this.state.widgets.slice(obj.contextId + 1)
-          ]
-        })
+        let index = this.findIndex(this.state.widgets, obj.contextId);
+
+        if (index !== -1) {
+          this.setState({
+            widgets: [
+              ...this.state.widgets.slice(0, index),
+              Object.assign({}, this.state.widgets[index], {
+                value: result.data.readVarSetResult.VarValues.VarValue
+              }),
+              ...this.state.widgets.slice(index + 1)
+            ]
+          })
+        }
       })
       .catch((e) => {
         console.error('bb', e);
@@ -169,17 +268,65 @@ class newPage extends Component {
     });
   }
 
-  handleValueChange = (value, index) => {
+  handleValueChange = (value, contextId) => {
 
-    this.setState({
-      widgets: [
-        ...this.state.widgets.slice(0, index),
-        Object.assign({}, this.state.widgets[index], {
-          value: value
-        }),
-        ...this.state.widgets.slice(index + 1)
-      ]
-    })
+    let index = this.findIndex(this.state.widgets, contextId);
+
+    if (index !== -1) {
+      this.setState({
+        widgets: [
+          ...this.state.widgets.slice(0, index),
+          Object.assign({}, this.state.widgets[index], {
+            value: value
+          }),
+          ...this.state.widgets.slice(index + 1)
+        ]
+      })
+    }
+  }
+
+  setConfig = (config, contextId) => {
+
+    let index = this.findIndex(this.state.widgets, contextId);
+
+    if (index !== -1) {
+      this.setState({
+        widgets: [
+          ...this.state.widgets.slice(0, index),
+          Object.assign({}, this.state.widgets[index], {
+            config: config
+          }),
+          ...this.state.widgets.slice(index + 1)
+        ]
+      })
+    }
+  }
+
+  setTitle = (title, contextId) => {
+
+    let index = this.findIndex(this.state.widgets, contextId);
+
+    if (index !== -1) {
+      this.setState({
+        widgets: [
+          ...this.state.widgets.slice(0, index),
+          Object.assign({}, this.state.widgets[index], {
+            title: title
+          }),
+          ...this.state.widgets.slice(index + 1)
+        ]
+      }, () => {
+        this.pageUpdate();
+      })
+    }
+  }
+
+  logoutHandler = () => {
+    axios.post('/rest/auth/logout', {session: window.sessionStorage.getItem("session")}).then((result) => {
+      window.sessionStorage.setItem("session", "");
+      window.sessionStorage.setItem("sessionType", "");
+      this.context.router.push('/')
+    }).catch((e) => {})
   }
 
   render() {
@@ -217,264 +364,37 @@ class newPage extends Component {
           {/* <pre>{JSON.stringify(this.state, false, 2)}</pre> */}
           {this.state.widgets && this.state.widgets.map((entry, key) => {
             return (
-              <Widget key={key} id={key} subscribe={this.subscribe} valueChange={this.handleValueChange} readVariable={this.readVariable} writeVariable={this.writeVariable} widgetType={entry.widgetType} names={this.state.names} nodes={this.state.nodes} value={entry.value}/>
+              <Widget
+                key={entry.contextId}
+                id={entry.contextId}
+                keyindex={key}
+                subscribe={this.subscribe}
+                valueChange={this.handleValueChange}
+                readVariable={this.readVariable}
+                writeVariable={this.writeVariable}
+                widgetType={entry.widgetType}
+                names={this.state.names}
+                nodes={this.state.nodes}
+                value={entry.value}
+                config={entry.config}
+                setConfig={this.setConfig}
+                pageUpdate={this.pageUpdate}
+                delete={this.deletePage}
+                setTitle={this.setTitle}
+                title={entry.title}
+              />
             )
           })
           }
-          {/* <ul className="list-group">
-            <li className="list-group-item">
-              <div className="handleGroupname">
-                <div>
-                  Rename
-                </div>
-                <div>
-                  Delete
-                </div>
-              </div>
-              <div className="WidgetButton">
-                Graph
-              </div>
-
-              <SimpleLineChart/>
-            </li>
-            <div className="WidgetButton">
-              <button className="dropdown button" type="button">Configure Widget</button>
-            </div>
-            <div className="large-12 columns">
-              <form>
-                <div className="row">
-                  <div className="larger-12 columns">
-
-                    <label>Select machine
-                      <select>
-                        <option value="">TEST_MACHINE</option>
-                        <option value="">TEST_MACHINE2</option>
-                      </select>
-                    </label>
-                    <label>Bind value
-                      <select>
-                        <option value="">StaticBoolean</option>
-                        <option value="">Double</option>
-                        <option value="">Integer</option>
-                        <option value="">DynamicBoolean</option>
-                      </select>
-                    </label>
-                    <label>Update intervall in milliseconds
-                      <input type="number" value="5"/>
-                    </label>
-                    <input type="checkbox"/>
-                    <label htmlFor="checkbox2">Activate Subscribe (Dataupdate)</label>
-                  </div>
-                </div>
-                <button className="button expanded">Set Widget</button>
-              </form>
-            </div>
-          </ul> */}
-
-          {/* <ul className="list-group">
-            <li className="list-group-item">
-              <div className="handleGroupname">
-                <div>
-                  Rename
-                </div>
-                <div>
-                  Delete
-                </div>
-              </div>
-              <div className="WidgetButton">
-                Toggle Button
-              </div>
-              <div className="switch round large">
-                <input id="exampleRadioSwitch3" type="radio" name="testGroup"/>
-                <label htmlFor="exampleRadioSwitch3"></label>
-              </div>
-
-            </li>
-            <div className="WidgetButton">
-              <button className="dropdown button" type="button">Configure Widget</button>
-            </div>
-            <div className="large-12 columns">
-              <form>
-                <div className="row">
-                  <div className="larger-12 columns">
-
-                    <label>Select machine
-                      <select>
-                        <option value="">TEST_MACHINE</option>
-                        <option value="">TEST_MACHINE2</option>
-                      </select>
-                    </label>
-                    <label>Bind value
-                      <select>
-                        <option value="">StaticBoolean</option>
-                        <option value="">Double</option>
-                        <option value="">Integer</option>
-                        <option value="">DynamicBoolean</option>
-                      </select>
-                    </label>
-                    <label>Update intervall in milliseconds
-                      <input type="number" value="5"/>
-                    </label>
-                    <input type="checkbox"/>
-                    <label htmlFor="checkbox2">Activate Subscribe (Dataupdate)</label>
-                  </div>
-                </div>
-                <button className="button expanded">Set Widget</button>
-              </form>
-            </div>
-          </ul> */}
-
-          {/* <ul className="list-group">
-            <li className="list-group-item">
-              <div className="handleGroupname">
-                <div>
-                  Rename
-                </div>
-                <div>
-                  Delete
-                </div>
-              </div>
-              <div className="WidgetButton">
-                Outputfield
-              </div>
-              <input type="search" placeholder="Value"/>
-            </li>
-            <div className="WidgetButton">
-              <button className="dropdown button" type="button">Configure Widget</button>
-            </div>
-            <div className="large-12 columns">
-              <form>
-                <div className="row">
-                  <div className="larger-12 columns">
-
-                    <label>Select machine
-                      <select>
-                        <option value="">TEST_MACHINE</option>
-                        <option value="">TEST_MACHINE2</option>
-                      </select>
-                    </label>
-                    <label>Bind value
-                      <select>
-                        <option value="">StaticBoolean</option>
-                        <option value="">Double</option>
-                        <option value="">Integer</option>
-                        <option value="">DynamicBoolean</option>
-                      </select>
-                    </label>
-                    <label>Update intervall in milliseconds
-                      <input type="number" value="5"/>
-                    </label>
-                    <input type="checkbox"/>
-                    <label htmlFor="checkbox2">Activate Subscribe (Dataupdate)</label>
-                  </div>
-                </div>
-                <button className="button expanded">Set Widget</button>
-              </form>
-            </div>
-          </ul>
-
-          <ul className="list-group">
-            <li className="list-group-item">
-              <div className="handleGroupname">
-                <div>
-                  Rename
-                </div>
-                <div>
-                  Delete
-                </div>
-              </div>
-              <div className="WidgetButton">
-                Inputfield
-              </div>
-              <input type="search" placeholder="Value"/>
-            </li>
-            <div className="WidgetButton">
-              <button className="dropdown button" type="button">Configure Widget</button>
-            </div>
-            <div className="large-12 columns">
-              <form>
-                <div className="row">
-                  <div className="larger-12 columns">
-
-                    <label>Select machine
-                      <select>
-                        <option value="">TEST_MACHINE</option>
-                        <option value="">TEST_MACHINE2</option>
-                      </select>
-                    </label>
-                    <label>Bind value
-                      <select>
-                        <option value="">StaticBoolean</option>
-                        <option value="">Double</option>
-                        <option value="">Integer</option>
-                        <option value="">DynamicBoolean</option>
-                      </select>
-                    </label>
-                    <label>Update intervall in milliseconds
-                      <input type="number" value="5"/>
-                    </label>
-                    <input type="checkbox"/>
-                    <label htmlFor="checkbox2">Activate Subscribe (Dataupdate)</label>
-                  </div>
-                </div>
-                <button className="button expanded">Set Widget</button>
-              </form>
-            </div>
-          </ul> */}
-
-          {/* <ul className="list-group">
-            <li className="list-group-item">
-              <div className="handleGroupname">
-                <div>
-                  Rename
-                </div>
-                <div>
-                  Delete
-                </div>
-              </div>
-              <div className="LED">
-                LED
-                <div className="circle"></div>
-              </div>
-            </li>
-            <div className="WidgetButton">
-              <button className="dropdown button" type="button">Configure Widget</button>
-            </div>
-            <div className="large-12 columns">
-              <form>
-                <div className="row">
-                  <div className="larger-12 columns">
-
-                    <label>Select machine
-                      <select>
-                        <option value="">TEST_MACHINE</option>
-                        <option value="">TEST_MACHINE2</option>
-                      </select>
-                    </label>
-                    <label>Bind value
-                      <select>
-                        <option value="">StaticBoolean</option>
-                        <option value="">Double</option>
-                        <option value="">Integer</option>
-                        <option value="">DynamicBoolean</option>
-                      </select>
-                    </label>
-                    <label>Update intervall in milliseconds
-                      <input type="number" value="5"/>
-                    </label>
-                    <input type="checkbox"/>
-                    <label htmlFor="checkbox2">Activate Subscribe (Dataupdate)</label>
-                  </div>
-                </div>
-                <button className="button expanded">Set Widget</button>
-              </form>
-            </div>
-          </ul> */}
-
         </div>
       </div>
 
     );
   }
 }
+
+newPage.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};
+
 export default newPage;

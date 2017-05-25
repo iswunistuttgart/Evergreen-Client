@@ -160,7 +160,7 @@ module.exports = {
             if (Object.prototype.toString.call( response.Config.Groups ) === '[object Object]') {
               if (Object.prototype.toString.call( response.Config.Groups.Pages ) === '[object Object]') {
                 if (parseInt(response.Config.Groups.Pages.Id) == parseInt(req.body.page)) {
-                  tempData = response.Config.Groups.Pages.Id;
+                  tempData = response.Config.Groups.Pages;
                 }
               } else if (response.Config.Groups.Pages) {
                 response.Config.Groups.Pages.forEach(function (page) {
@@ -173,7 +173,7 @@ module.exports = {
               response.Config.Groups.forEach(function (group) {
                 if (Object.prototype.toString.call( group.Pages ) === '[object Object]') {
                   if (parseInt(group.Pages.Id) == parseInt(req.body.page)) {
-                    tempData = group.Pages.Id;
+                    tempData = group.Pages;
                   }
                 } else if (group.Pages) {
                   group.Pages.forEach(function (page) {
@@ -190,9 +190,14 @@ module.exports = {
 
               try {
                 tempData.ConfigXML = JSON.parse(tempData.ConfigXML);
+                if (!tempData.ConfigXML) {
+                  tempData.ConfigXML = [];
+                }
               } catch (e) {
                 tempData.ConfigXML = [];
               }
+            } else {
+              tempData.ConfigXML = [];
             }
 
             res.send(tempData);

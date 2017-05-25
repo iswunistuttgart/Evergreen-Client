@@ -72,6 +72,9 @@ module.exports = function(io) {
               if (response.errors && response.errors.Errors)
                 return console.log('something wrong!')
 
+              if (!response.notifications)
+                return;
+
               socket.emit('subscription_result', {tolleranceInterval: data.tolleranceInterval > 200 ? data.tolleranceInterval : 200, response: response})
             })
           })
