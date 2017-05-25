@@ -12,28 +12,32 @@ class newPage extends Component {
       names: [],
       nodes: [],
       widgets: [],
-      widgetselect: 'graph'
+      widgetselect: 'graph',
+      page: {}
     }
   }
 
   componentDidMount() {
 
-    socket.on('subscription_result', (socketData) => {
-      if (Object.prototype.toString.call( socketData.response.notifications.UserNotifications ) === '[object Object]') {
-        if (parseInt(socketData.response.notifications.UserNotifications.ContextId) <= this.state.widgets.length - 1) {
-          let tempMs;
-          if (this.state.widgets[socketData.response.notifications.UserNotifications.ContextId].valueArray.length === 0) {
-            tempMs = 0;
-          } else {
-            tempMs = this.state.widgets[socketData.response.notifications.UserNotifications.ContextId].valueArray[this.state.widgets[socketData.response.notifications.UserNotifications.ContextId].valueArray.length - 1].x + socketData.tolleranceInterval;
-          }
+    axios.post('/rest/page/get', {session: window.sessionStorage.getItem("session"), page: this.props.params.pageId}).then((page) => {
+      console.log('aa', page.data);
+      this.setState({
+        page: {Id: page.data.Id, Title: page.data.Title, CreatorId: page.data.CreatorId},
+        widgets: page.data.ConfigXML
+      })
+    }).catch((err) => {
+      console.error('err', err);
+    })
 
+    socket.on('subscription_result', (socketData) => {
+
+      if (socketData.response.notifications && Object.prototype.toString.call( socketData.response.notifications.UserNotifications ) === '[object Object]') {
+        if (parseInt(socketData.response.notifications.UserNotifications.ContextId) <= this.state.widgets.length - 1) {
           this.setState({
             widgets: [
               ...this.state.widgets.slice(0, parseInt(socketData.response.notifications.UserNotifications.ContextId)),
               Object.assign({}, this.state.widgets[parseInt(socketData.response.notifications.UserNotifications.ContextId)], {
-                value: socketData.response.notifications.UserNotifications.Variable.VarValue,
-                valueArray: [...this.state.widgets[parseInt(socketData.response.notifications.UserNotifications.ContextId)].valueArray, {x: tempMs, y: parseFloat(socketData.response.notifications.UserNotifications.Variable.VarValue)}]
+                value: socketData.response.notifications.UserNotifications.Variable.VarValue
               }),
               ...this.state.widgets.slice(parseInt(socketData.response.notifications.UserNotifications.ContextId) + 1)
             ]
@@ -42,20 +46,12 @@ class newPage extends Component {
       } else {
         socketData.response.notifications.UserNotifications.map((entry) => {
           if (parseInt(entry.ContextId) <= this.state.widgets.length - 1) {
-            let tempMs;
-            if (this.state.widgets[entry.ContextId].valueArray.length === 0) {
-              tempMs = 0;
-            } else {
-              console.log('aaaaa', this.state.widgets[entry.ContextId].valueArray);
-              tempMs = this.state.widgets[entry.ContextId].valueArray[this.state.widgets[entry.ContextId].valueArray.length - 1].x + socketData.tolleranceInterval;
-            }
 
             this.setState({
               widgets: [
                 ...this.state.widgets.slice(0, parseInt(entry.ContextId)),
                 Object.assign({}, this.state.widgets[parseInt(entry.ContextId)], {
                   value: entry.Variable.VarValue,
-                  valueArray: [...this.state.widgets[parseInt(entry.ContextId)].valueArray, {x: tempMs, y: parseFloat(entry.Variable.VarValue)}]
                 }),
                 ...this.state.widgets.slice(parseInt(entry.ContextId) + 1)
               ]
@@ -101,7 +97,17 @@ class newPage extends Component {
 
   addWidget = () => {
     this.setState({
-      widgets: [...this.state.widgets, {widgetType: this.state.widgetselect, value: '', valueArray: []}]
+      widgets: [...this.state.widgets, {widgetType: this.state.widgetselect, value: ''}]
+    }, () => {
+      let tempString = window.btoa(JSON.stringify(this.state.widgets));
+
+      axios.post('/rest/page/update', {session: window.sessionStorage.getItem("session"), page: {Id: this.props.params.pageId, CreatorId: this.state.page.CreatorId, Title: this.state.page.Title, ConfigXML: tempString}})
+        .then((result) => {
+
+        })
+        .catch((e) => {
+          console.error('cc', e);
+        })
     })
   }
 
@@ -118,23 +124,31 @@ class newPage extends Component {
   readVariable = (obj) => {
     axios.post('/rest/subscribe/read', Object.assign({}, obj, {session: window.sessionStorage.getItem("session")}))
       .then((result) => {
-        let tempMs;
-        console.log('aa', this.state.widgets, obj)
-
-        if (this.state.widgets[obj.contextId].valueArray.length === 0) {
-          tempMs = 0;
-        } else {
-          tempMs = this.state.widgets[obj.contextId].valueArray[this.state.widgets[obj.contextId].valueArray.length - 1].x + 500;
-        }
-
-        console.log('ss');
 
         this.setState({
           widgets: [
             ...this.state.widgets.slice(0, obj.contextId),
             Object.assign({}, this.state.widgets[obj.contextId], {
               value: result.data.readVarSetResult.VarValues.VarValue,
-              valueArray: [...this.state.widgets[obj.contextId].valueArray, {x: tempMs, y: result.data.readVarSetResult.VarValues.VarValue}]
+            }),
+            ...this.state.widgets.slice(obj.contextId + 1)
+          ]
+        })
+      })
+      .catch((e) => {
+        console.error('bb', e);
+      })
+  }
+
+  writeVariable = (obj) => {
+    axios.post('/rest/subscribe/write', Object.assign({}, obj, {session: window.sessionStorage.getItem("session")}))
+      .then((result) => {
+
+        this.setState({
+          widgets: [
+            ...this.state.widgets.slice(0, obj.contextId),
+            Object.assign({}, this.state.widgets[obj.contextId], {
+              value: result.data.writeVarSetInformations.VarValues.VarValue
             }),
             ...this.state.widgets.slice(obj.contextId + 1)
           ]
@@ -156,19 +170,12 @@ class newPage extends Component {
   }
 
   handleValueChange = (value, index) => {
-    let tempMs;
-    if (this.state.widgets[index].valueArray.length === 0) {
-      tempMs = 0;
-    } else {
-      tempMs = this.state.widgets[index].valueArray[this.state.widgets[index].valueArray.length - 1].x + 500;
-    }
 
     this.setState({
       widgets: [
         ...this.state.widgets.slice(0, index),
         Object.assign({}, this.state.widgets[index], {
-          value: value,
-          valueArray: [...this.state.widgets[parseInt(index)].valueArray, {x: tempMs, y: value}]
+          value: value
         }),
         ...this.state.widgets.slice(index + 1)
       ]
@@ -208,9 +215,9 @@ class newPage extends Component {
         </div>
         <div className="flex-container">
           {/* <pre>{JSON.stringify(this.state, false, 2)}</pre> */}
-          {this.state.widgets.map((entry, key) => {
+          {this.state.widgets && this.state.widgets.map((entry, key) => {
             return (
-              <Widget key={key} id={key} subscribe={this.subscribe} valueChange={this.handleValueChange} readVariable={this.readVariable} widgetType={entry.widgetType} names={this.state.names} nodes={this.state.nodes} value={entry.value} valueArray={entry.valueArray}/>
+              <Widget key={key} id={key} subscribe={this.subscribe} valueChange={this.handleValueChange} readVariable={this.readVariable} writeVariable={this.writeVariable} widgetType={entry.widgetType} names={this.state.names} nodes={this.state.nodes} value={entry.value}/>
             )
           })
           }

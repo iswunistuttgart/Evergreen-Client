@@ -19,7 +19,9 @@ class Home extends Component {
     axios.post('/rest/pageconfig/get', {session: window.sessionStorage.getItem("session")}).then((userPageConfig) => {
       console.log('aa', userPageConfig.data);
       this.setState({groups: userPageConfig.data.Groups, ownerId: userPageConfig.data.OwnerId})
-    }).catch((err) => {})
+    }).catch((err) => {
+      console.error('err', err);
+    })
   }
 
   renameHandler = (index) => {
@@ -320,6 +322,7 @@ class Home extends Component {
     return (
       <div>
         <Home_Nav createHandler={this.createHandler} router={this.context.router}/>
+        {/* <pre>{JSON.stringify(this.state.groups, false, 2)}</pre> */}
         <ul className="flex-container">
           {this.state.groups && this.state.groups.map((entry, index) => {
             return (
@@ -360,7 +363,7 @@ class Home extends Component {
                             <button type="submit" onClick={() => this.pageEditHandler(index, pageIndex, page)}>Save</button>
                           </div>
                           :
-                          <a href="#/newPage">{page.Title}</a>
+                          <a href={'#/newPage/' + page.Id}>{page.Title}</a>
                         }
                       </li>
                     )
@@ -382,7 +385,7 @@ class Home extends Component {
                           <button type="submit" onClick={() => this.pageEditHandler(index, null, entry.Pages)}>Save</button>
                         </div>
                         :
-                        <a href="#/newPage">{entry.Pages.Title}</a>
+                        <a href={'#/newPage/' + entry.Pages.Id}>{entry.Pages.Title}</a>
                       }
                     </li>
                   }

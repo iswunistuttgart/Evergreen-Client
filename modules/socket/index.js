@@ -31,10 +31,13 @@ var testData = {
 
 module.exports = function(io) {
   io.on("connection", function(socket) {
+    console.log('connection');
     sockets[socket.id] = socket;
     var newInterval;
+    var oldIntervalTollerance;
 
     socket.on('subscribe', function(data) {
+
       if (!users[socket.id]) {
         users[socket.id] = {
           session: data.session,
@@ -43,6 +46,12 @@ module.exports = function(io) {
       } else {
         users[socket.id].contextIds.push(data.contextId);
       }
+
+      if (newInterval) {
+        clearInterval(newInterval);
+      }
+
+      oldIntervalTollerance = (oldIntervalTollerance && (oldIntervalTollerance < (data.tolleranceInterval > 200 ? data.tolleranceInterval : 200))) ? oldIntervalTollerance : (data.tolleranceInterval > 200 ? data.tolleranceInterval : 200);
 
       newInterval = setInterval(function() {
         if (cfg.IS_WEBSERVICE) {
@@ -63,16 +72,16 @@ module.exports = function(io) {
               if (response.errors && response.errors.Errors)
                 return console.log('something wrong!')
 
-              socket.emit('subscription_result', {tolleranceInterval: data.tolleranceInterval > 500 ? data.tolleranceInterval : 500, response: response})
+              socket.emit('subscription_result', {tolleranceInterval: data.tolleranceInterval > 200 ? data.tolleranceInterval : 200, response: response})
             })
           })
         } else {
           testData.notifications.UserNotifications.forEach(function(entry) {
             entry.Variable.VarValue = Math.random();
           })
-          socket.emit('subscription_result', {tolleranceInterval: data.tolleranceInterval > 500 ? data.tolleranceInterval : 500, response: testData})
+          socket.emit('subscription_result', {tolleranceInterval: data.tolleranceInterval > 200 ? data.tolleranceInterval : 200, response: testData})
         }
-      }, data.tolleranceInterval > 500 ? data.tolleranceInterval : 500);
+      }, oldIntervalTollerance);
     })
     socket.on('disconnect', function() {
       delete sockets[socket.id];

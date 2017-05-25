@@ -46,7 +46,7 @@ module.exports = {
             }
 
             if (cfg.IS_WEBSERVICE) {
-              soap.createClient(webServiceUrl, function(err, client) {
+              soap.createClient(webServiceUrl, {disableCache: true},  function(err, client) {
                 if (err)
                   return next(err);
 
@@ -54,8 +54,12 @@ module.exports = {
                   if (err)
                     return next(err);
 
-                  if (response.errors && response.errors.Errors)
+                  if (response.errors && response.errors.Errors) {
+                    if (response.errors.Errors.ErrorId == '99') {
+                      return next(new Error('username or password wrong!'))
+                    }
                     return next(new Error('something wrong'))
+                  }
 
                   if (!response.result)
                     return next(new Error('something wrong'))

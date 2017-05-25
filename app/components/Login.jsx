@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import { browserHistory } from 'react-router';
+import {browserHistory} from 'react-router';
 
 require('jquery.soap');
 
@@ -15,17 +15,14 @@ class Login extends Component {
     };
   }
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
   handleInputChange = (event) => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
-    });
+    this.setState({[name]: value});
   }
 
   handleLogin = () => {
@@ -34,26 +31,37 @@ class Login extends Component {
     } else if (!this.state.password) {
       return this.setState({errorFlag: 'Please input password'})
     } else {
-      axios.post('/rest/auth/login', {servername: this.props.selectedServer.serverName, serveradress: this.props.selectedServer.serverAdress, port: this.props.selectedServer.port, username: this.state.username, password: this.state.password})
-        .then((result) => {
-          this.setState({
-            username: '',
-            password: '',
-            errorFlag: ''
-          })
+      axios.post('/rest/auth/login', {
+        servername: this.props.selectedServer.serverName,
+        serveradress: this.props.selectedServer.serverAdress,
+        port: this.props.selectedServer.port,
+        username: this.state.username,
+        password: this.state.password
+      }).then((result) => {
+        this.setState({username: '', password: '', errorFlag: ''})
 
-          console.log('@@!!', result)
+        console.log('@@!!', result)
 
-          window.sessionStorage.setItem("session", result.data.Session);
-          window.sessionStorage.setItem("sessionType", result.data.SessionType);
+        window.sessionStorage.setItem("session", result.data.Session);
+        window.sessionStorage.setItem("sessionType", result.data.SessionType);
 
-          this.props.router.push('/home')
-        })
-        .catch((e) => {
-          console.log('e!!!!', e)
-          this.setState({errorFlag: e.response.data})
-          console.error('error occured', e);
-        })
+        this.props.router.push('/home')
+      }).catch((error) => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          this.setState({errorFlag: error.response.data.message})
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
+        console.log(error.config);
+      })
     }
   }
 
@@ -74,14 +82,16 @@ class Login extends Component {
             </label>
           </div>
         </div>
-        {
-          !this.props.loginError && this.state.errorFlag &&
-          <span style={{color: 'red', fontSize: 12}}>{this.state.errorFlag}</span>
-        }
-        {
-          this.props.loginError &&
-          <span style={{color: 'red', fontSize: 12}}>{this.props.loginError}</span>
-        }
+        {!this.props.loginError && this.state.errorFlag && <span style={{
+          color: 'red',
+          fontSize: 12
+        }}>{this.state.errorFlag}</span>
+}
+        {this.props.loginError && <span style={{
+          color: 'red',
+          fontSize: 12
+        }}>{this.props.loginError}</span>
+}
         <button type="button" onClick={this.handleLogin} className="button expanded">Login</button>
       </div>
 

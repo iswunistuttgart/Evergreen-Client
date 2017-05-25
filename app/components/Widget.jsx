@@ -17,12 +17,15 @@ class Widget extends Component {
     if (this.refs['subscribe'].checked) {
       this.props.subscribe({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value});
     } else {
-      this.props.readVariable({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value})
+      if (this.props.widgetType === 'toggle') {
+        let temp = (!this.props.value || this.props.value === 'false' || this.props.value === '0') ? 'false' : 'true';
+        this.props.writeVariable({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value, varValue: temp})
+      } else if ((this.props.value || this.props.value !== false || this.props.value !== '0' || this.props.value !== 0) && this.props.widgetType === 'inputfield') {
+        this.props.writeVariable({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value, varValue: this.props.value})
+      } else {
+        this.props.readVariable({contextId: this.props.id, machineId: this.refs['selectMachine'].value, varId: this.refs['bindValue'].value, tolleranceInterval: this.refs['tolleranceInterval'].value})
+      }
     }
-
-    // if (this.props.value) {
-    //   this.props.write({})
-    // }
   }
 
   handleInputValueChange = (event) => {
@@ -50,7 +53,7 @@ class Widget extends Component {
               <div className="WidgetButton">
                 Graph
               </div>
-              <SimpleLineChart data={this.props.valueArray} />
+              <SimpleLineChart id={this.props.id} value={this.props.value} />
             </div>
           }
           {this.props.widgetType === 'toggle' &&
@@ -59,7 +62,7 @@ class Widget extends Component {
                 Toggle Button
               </div>
               <label className="switch">
-                <input type="checkbox" checked={this.props.value && this.props.value != 'false'} onChange={this.handleCheckValueChange}/>
+                <input type="checkbox" checked={this.props.value && this.props.value != 'false' && this.props.value != '0'} onChange={this.handleCheckValueChange}/>
                 <div className="slider-switch round"></div>
               </label>
             </div>
@@ -67,7 +70,7 @@ class Widget extends Component {
           {this.props.widgetType === 'lamp' &&
             <div className="LED">
               LED
-              {(!this.props.value || this.props.value == 'false') ?
+              {(!this.props.value || this.props.value == 'false' || this.props.value == '0') ?
                   <div className="circle"></div>
                 : <div className="circle" style={{backgroundColor: 'green'}}></div>
               }

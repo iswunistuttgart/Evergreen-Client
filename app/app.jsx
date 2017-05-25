@@ -16,6 +16,6 @@ ReactDOM.render((
   <Router history={hashHistory}>
     <Route path="/" component={LoginApp} />
     <Route path="/home" component={Home} />
-    <Route path="/newPage" component={newPage} />
+    <Route path="/newPage/:pageId" component={newPage} />
   </Router>
 ), document.getElementById('app'));

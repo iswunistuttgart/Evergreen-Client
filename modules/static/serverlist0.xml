@@ -27,6 +27,16 @@
   </server>
   <server>
     <serverName>Newest Server</serverName>
+    <serverAdress>http://192.168.178.49</serverAdress>
+    <port>18083</port>
+  </server>
+  <server>
+    <serverName>aaaa</serverName>
+    <serverAdress>http://192.168.56.102</serverAdress>
+    <port>18083</port>
+  </server>
+  <server>
+    <serverName>Shan-Server</serverName>
     <serverAdress>http://192.168.178.58</serverAdress>
     <port>18083</port>
   </server>

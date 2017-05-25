@@ -37,20 +37,31 @@ module.exports = {
         }
       }
 
+      let unsubscribeArgs = {
+        auth: {
+          AuthSession: req.body.session
+        },
+        unsubscribeItems: {
+          VarSubscriptions: req.body.contextId
+        }
+      }
+
       if (cfg.IS_WEBSERVICE) {
 
         soap.createClient(webServiceUrl, function(err, client) {
           if (err)
             return next(err);
 
-          client.Subscribe(args, function(err, response) {
-            if (err)
-              return next(err);
+          client.Unsubscribe(unsubscribeArgs, function (err) {
+            client.Subscribe(args, function(err, response) {
+              if (err)
+                return next(err);
 
-            if (response.errors && response.errors.Errors)
-              return next(new Error('something wrong'))
+              if (response.errors && response.errors.Errors)
+                return next(new Error('something wrong'))
 
-            res.send(response);
+              res.send(response);
+            })
           })
         })
       } else {

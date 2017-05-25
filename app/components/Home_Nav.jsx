@@ -7,6 +7,7 @@ class Home_Nav extends Component {
   componentDidMount() {}
 
   logoutHandler = () => {
+    console.log('clicked logout!');
 
     axios.post('/rest/auth/logout', {session: window.sessionStorage.getItem("session")}).then((result) => {
       window.sessionStorage.setItem("session", "");

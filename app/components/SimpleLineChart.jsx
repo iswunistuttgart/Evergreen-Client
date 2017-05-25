@@ -1,27 +1,35 @@
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
-import {LineChart} from 'react-d3';
+import d3 from 'd3';
+import Epoch from './EpochChart';
+
+let data = [
+  { label: 'Layer 1', values: [] }
+];
 
 class SimpleLineChart extends Component {
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.areaChartInstance = $('#line' + this.props.id).epoch({
+        type: 'time.line',
+        data: data,
+        axes: ['left', 'right', 'bottom']
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.value !== nextProps.value) {
+      this.areaChartInstance.push([{y: nextProps.value, time: Date.now()}]);
+    }
+  }
+
+  componentWillUnmount() {
+  }
 
   render() {
-    return this.props.data.length
-      ? (<LineChart data={[{
-          name: "series",
-          strokeWidth: 3,
-          values: this.props.data || []
-        }
-      ]} width={500} height={300} viewBoxObject={{
-        x: 0,
-        y: 0,
-        width: 600,
-        height: 400
-      }} title="Line Chart" xAxisLabel="Elapsed Time (ms)" gridHorizontal={true}/>)
-      : (
-        <div></div>
-      )
+    return (
+      <div id={'line' + this.props.id} className="epoch category10" style={{height: '400px', width: '600px'}}></div>
+    )
   }
 }
 
