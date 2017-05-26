@@ -13,6 +13,7 @@ class SimpleLineChart extends Component {
     this.areaChartInstance = $('#line' + this.props.id).epoch({
         type: 'time.line',
         data: data,
+        fps: 1, 
         axes: ['left', 'right', 'bottom']
     });
   }

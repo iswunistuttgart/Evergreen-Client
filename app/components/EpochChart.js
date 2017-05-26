@@ -1644,16 +1644,16 @@ Epoch.Chart.Plot = (function(superClass) {
 
   Plot.prototype._redrawAxes = function() {
     if (this.hasAxis('bottom')) {
-      this.g.selectAll('.x.axis.bottom').transition().duration(500).ease('linear').call(this.bottomAxis());
+      this.g.selectAll('.x.axis.bottom').transition().duration(0).ease('linear').call(this.bottomAxis());
     }
     if (this.hasAxis('top')) {
-      this.g.selectAll('.x.axis.top').transition().duration(500).ease('linear').call(this.topAxis());
+      this.g.selectAll('.x.axis.top').transition().duration(0).ease('linear').call(this.topAxis());
     }
     if (this.hasAxis('left')) {
-      this.g.selectAll('.y.axis.left').transition().duration(500).ease('linear').call(this.leftAxis());
+      this.g.selectAll('.y.axis.left').transition().duration(0).ease('linear').call(this.leftAxis());
     }
     if (this.hasAxis('right')) {
-      return this.g.selectAll('.y.axis.right').transition().duration(500).ease('linear').call(this.rightAxis());
+      return this.g.selectAll('.y.axis.right').transition().duration(0).ease('linear').call(this.rightAxis());
     }
   };
 
@@ -1695,7 +1695,7 @@ Epoch.Chart.Plot = (function(superClass) {
         this.margins[pos] = size;
       }
     }
-    this.g.transition().duration(750).attr("transform", "translate(" + this.margins.left + ", " + this.margins.top + ")");
+    this.g.transition().duration(0).attr("transform", "translate(" + this.margins.left + ", " + this.margins.top + ")");
     return this.draw();
   };
 
@@ -1713,7 +1713,7 @@ Epoch.Chart.Plot = (function(superClass) {
         this.margins[pos] = 6;
       }
     }
-    this.g.transition().duration(750).attr("transform", "translate(" + this.margins.left + ", " + this.margins.top + ")");
+    this.g.transition().duration(0).attr("transform", "translate(" + this.margins.left + ", " + this.margins.top + ")");
     this.g.selectAll('.axis').remove();
     this._axesDrawn = false;
     return this.draw();
@@ -1980,7 +1980,7 @@ Epoch.Chart.Bar = (function(superClass) {
     layer = this.g.selectAll(".layer").data(data, function(d) {
       return d.group;
     });
-    layer.transition().duration(750).attr("transform", function(d) {
+    layer.transition().duration(0).attr("transform", function(d) {
       return "translate(" + (x0(d.group)) + ", 0)";
     });
     layer.enter().append("g").attr('class', 'layer').attr("transform", function(d) {
@@ -1992,7 +1992,7 @@ Epoch.Chart.Bar = (function(superClass) {
     rects.attr('class', function(d) {
       return d.className;
     });
-    rects.transition().duration(600).attr('x', function(d) {
+    rects.transition().duration(0).attr('x', function(d) {
       return x1(d.label);
     }).attr('y', function(d) {
       return y(d.y);
@@ -2008,8 +2008,8 @@ Epoch.Chart.Bar = (function(superClass) {
     }).attr('width', x1.rangeBand()).attr('height', function(d) {
       return height - y(d.y);
     });
-    rects.exit().transition().duration(150).style('opacity', '0').remove();
-    return layer.exit().transition().duration(750).style('opacity', '0').remove();
+    rects.exit().transition().duration(0).style('opacity', '0').remove();
+    return layer.exit().transition().duration(0).style('opacity', '0').remove();
   };
 
   Bar.prototype._drawHorizontal = function() {
@@ -2021,7 +2021,7 @@ Epoch.Chart.Bar = (function(superClass) {
     layer = this.g.selectAll(".layer").data(data, function(d) {
       return d.group;
     });
-    layer.transition().duration(750).attr("transform", function(d) {
+    layer.transition().duration(0).attr("transform", function(d) {
       return "translate(0, " + (y0(d.group)) + ")";
     });
     layer.enter().append("g").attr('class', 'layer').attr("transform", function(d) {
@@ -2033,7 +2033,7 @@ Epoch.Chart.Bar = (function(superClass) {
     rects.attr('class', function(d) {
       return d.className;
     });
-    rects.transition().duration(600).attr('x', function(d) {
+    rects.transition().duration(0).attr('x', function(d) {
       return 0;
     }).attr('y', function(d) {
       return y1(d.label);
@@ -2049,8 +2049,8 @@ Epoch.Chart.Bar = (function(superClass) {
     }).attr('height', y1.rangeBand()).attr('width', function(d) {
       return x(d.y);
     });
-    rects.exit().transition().duration(150).style('opacity', '0').remove();
-    return layer.exit().transition().duration(750).style('opacity', '0').remove();
+    rects.exit().transition().duration(0).style('opacity', '0').remove();
+    return layer.exit().transition().duration(0).style('opacity', '0').remove();
   };
 
   Bar.prototype._getTickValues = function(numTicks, dataKey) {
@@ -2263,7 +2263,7 @@ Epoch.Chart.Line = (function(superClass) {
     layer = this.g.selectAll('.layer').data(layers, function(d) {
       return d.category;
     });
-    layer.select('.line').transition().duration(500).attr('d', (function(_this) {
+    layer.select('.line').transition().duration(0).attr('d', (function(_this) {
       return function(l) {
         return _this.line(l)(l.values);
       };
@@ -2275,7 +2275,7 @@ Epoch.Chart.Line = (function(superClass) {
         return _this.line(l)(l.values);
       };
     })(this));
-    layer.exit().transition().duration(750).style('opacity', '0').remove();
+    layer.exit().transition().duration(0).style('opacity', '0').remove();
     return Line.__super__.draw.call(this);
   };
 
@@ -2397,7 +2397,7 @@ Epoch.Chart.Scatter = (function(superClass) {
     dots = layer.selectAll('.dot').data(function(l) {
       return l.values;
     });
-    dots.transition().duration(500).attr("r", function(d) {
+    dots.transition().duration(0).attr("r", function(d) {
       var ref1;
       return (ref1 = d.r) != null ? ref1 : radius;
     }).attr("cx", function(d) {
@@ -2413,8 +2413,8 @@ Epoch.Chart.Scatter = (function(superClass) {
     }).attr("cy", function(d) {
       return y(d.y);
     });
-    dots.exit().transition().duration(750).style('opacity', 0).remove();
-    layer.exit().transition().duration(750).style('opacity', 0).remove();
+    dots.exit().transition().duration(0).style('opacity', 0).remove();
+    layer.exit().transition().duration(0).style('opacity', 0).remove();
     return Scatter.__super__.draw.call(this);
   };
 
@@ -2762,10 +2762,10 @@ Epoch.Time.Plot = (function(superClass) {
 
   Plot.prototype._transitionRangeAxes = function() {
     if (this.hasAxis('left')) {
-      this.svg.selectAll('.y.axis.left').transition().duration(500).ease('linear').call(this.leftAxis());
+      this.svg.selectAll('.y.axis.left').transition().duration(0).ease('linear').call(this.leftAxis());
     }
     if (this.hasAxis('right')) {
-      return this.svg.selectAll('.y.axis.right').transition().duration(500).ease('linear').call(this.rightAxis());
+      return this.svg.selectAll('.y.axis.right').transition().duration(0).ease('linear').call(this.rightAxis());
     }
   };
 

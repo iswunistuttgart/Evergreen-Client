@@ -28,9 +28,9 @@ class Widget extends Component {
     } else {
       if (this.props.widgetType === 'toggle') {
         let temp = (!this.props.value || this.props.value === 'false' || this.props.value === '0') ? 'false' : 'true';
-        this.props.writeVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval, varValue: temp})
+        this.props.writeVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval, varValue: temp, isSubscribe: false})
       } else if ((this.props.value || this.props.value !== false || this.props.value !== '0' || this.props.value !== 0) && this.props.widgetType === 'inputfield') {
-        this.props.writeVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval, varValue: this.props.value})
+        this.props.writeVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval, varValue: this.props.value, isSubscribe: false})
       } else {
         this.props.readVariable({contextId: this.props.id, machineId: this.props.config.machineId, varId: this.props.config.varId, tolleranceInterval: this.props.config.tolleranceInterval})
       }

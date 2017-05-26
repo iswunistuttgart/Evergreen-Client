@@ -14,11 +14,14 @@ class newPage extends Component {
       nodes: [],
       widgets: [],
       widgetselect: 'graph',
-      page: {}
+      page: {},
+      username: ''
     }
   }
 
   componentDidMount() {
+
+    this.setState({username: window.sessionStorage.getItem("username")})
 
     axios.post('/rest/page/get', {session: window.sessionStorage.getItem("session"), page: this.props.params.pageId}).then((page) => {
 
@@ -36,7 +39,6 @@ class newPage extends Component {
     })
 
     socket.on('subscription_result', (socketData) => {
-
       if (socketData.response.notifications && Object.prototype.toString.call( socketData.response.notifications.UserNotifications ) === '[object Object]') {
         // if (parseInt(socketData.response.notifications.UserNotifications.ContextId) <= this.state.widgets.length - 1) {
         let index = this.findIndex(this.state.widgets, socketData.response.notifications.UserNotifications.ContextId)
@@ -337,10 +339,19 @@ class newPage extends Component {
       <main>
         <page-top>
           <div className="page-top clearfix">
-            <a href className="al-logo clearfix">
+            <a href="/" className="al-logo clearfix">
               <span>Ever</span>
               Green
             </a>
+            <div style={{
+                marginLeft: '25px',
+                color: '#ffffff',
+                fontSize: '24px',
+                whiteSpace: 'nowrap',
+                float: 'left',
+                lineHeight: '60px'}}>
+              <span>{this.state.username}</span>
+            </div>
             <div className="logoutWrapper">
               <a href onClick={this.logoutHandler}>Logout</a>
             </div>
@@ -364,7 +375,7 @@ class newPage extends Component {
           <div className="al-content">
             <content-top>
               <div className="content-top clearfix">
-                <h1 className="al-title ng-binding">New Page</h1>
+                <h1 className="al-title ng-binding">{this.state.page.Title}</h1>
               </div>
             </content-top>
             <div>

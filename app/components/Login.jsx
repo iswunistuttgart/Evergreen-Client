@@ -38,6 +38,7 @@ class Login extends Component {
         username: this.state.username,
         password: this.state.password
       }).then((result) => {
+        window.sessionStorage.setItem("username", this.state.username);
         this.setState({username: '', password: '', errorFlag: ''})
 
         console.log('@@!!', result)

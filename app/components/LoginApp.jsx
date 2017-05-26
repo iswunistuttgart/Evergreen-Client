@@ -64,8 +64,9 @@ class LoginApp extends Component {
       // </div>
       <main className="auth-main">
         <div className="auth-block">
-          <h1>Evergreen</h1>
-
+          <h1>
+            <img src="/app/assets/img/logo.png" width="250" className="image-contrast"/>
+          </h1>
           <form className="form-horizontal">
             <ServerBox servers={this.state.servers} setSelected={this.setSelected} selectedServer={this.state.selected}/>
             <AddRemoveServer servers={this.state.servers} refreshServers={this.refreshServers} selectedServer={this.state.selected}/>

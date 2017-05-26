@@ -505,3 +505,7 @@ label.custom-checkbox > input:checked + span:before, label.custom-radio > input:
   border-radius: 50%;
   background-color: red;
 }
+
+.image-contrast {
+  image-rendering: -webkit-optimize-contrast;
+}

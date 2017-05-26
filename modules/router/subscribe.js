@@ -37,6 +37,8 @@ module.exports = {
         }
       }
 
+      console.log('req', req.body.tolleranceInterval);
+
       let unsubscribeArgs = {
         auth: {
           AuthSession: req.body.session
@@ -172,30 +174,66 @@ module.exports = {
         }
       }
 
+      let unsubscribeArgs = {
+        auth: {
+          AuthSession: req.body.session
+        },
+        unsubscribeItems: {
+          VarSubscriptions: req.body.contextId
+        }
+      }
+
       if (cfg.IS_WEBSERVICE) {
 
-        soap.createClient(webServiceUrl, function(err, client) {
-          if (err)
-            return next(err);
-
-          client.WriteVariableSet(args, function(err, response) {
+        if (req.body.isSubscribe === false) {
+          soap.createClient(webServiceUrl, function(err, client) {
             if (err)
               return next(err);
 
-            if (response.errors && response.errors.Errors)
-              return next(new Error('something wrong'))
+            client.Unsubscribe(unsubscribeArgs, function (err) {
+              client.WriteVariableSet(args, function(err, response) {
+                if (err)
+                  return next(err);
 
-            client.ReadVariableSet(readArgs, function (err, response) {
+                if (response.errors && response.errors.Errors)
+                  return next(new Error('something wrong'))
+
+                client.ReadVariableSet(readArgs, function (err, response) {
+                  if (err)
+                    return next(err);
+
+                  if (response.errors && response.errors.Errors)
+                    return next(new Error('something wrong'))
+
+                  res.send(response);
+                })
+              })
+            })
+          })
+        } else {
+          soap.createClient(webServiceUrl, function(err, client) {
+            if (err)
+              return next(err);
+
+            client.WriteVariableSet(args, function(err, response) {
               if (err)
                 return next(err);
 
               if (response.errors && response.errors.Errors)
                 return next(new Error('something wrong'))
 
-              res.send(response);
+              client.ReadVariableSet(readArgs, function (err, response) {
+                if (err)
+                  return next(err);
+
+                if (response.errors && response.errors.Errors)
+                  return next(new Error('something wrong'))
+
+                res.send(response);
+              })
             })
           })
-        })
+        }
       } else {
         res.send(true);
       }
