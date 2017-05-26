@@ -1,0 +1,10 @@
+{
+  "Machines": {
+    "Machines": {
+      "Name": "TEST_MACHINE",
+      "Id": "TEST_MACHINE",
+      "ConnectionStatus": "Online"
+    }
+  },
+  "errors": null
+}

@@ -1,0 +1,21 @@
+{
+  "GetAllNodesResponse": {
+    "Nodes": [{
+      "NodeId": "DemoBool",
+      "MachineId": "TEST_MACHINE",
+      "NodeName": "DemoBool",
+      "NodeKind": "VARIABLE_BOOLEAN"
+    }, {
+      "NodeId": "DemoDouble",
+      "MachineId": "TEST_MACHINE",
+      "NodeName": "DemoDouble",
+      "NodeKind": "VARIABLE_DOUBLE"
+    }, {
+      "NodeId": "DemoStaticBool",
+      "MachineId": "TEST_MACHINE",
+      "NodeName": "DemoStaticBool",
+      "NodeKind": "VARIABLE_BOOLEAN"
+    }]
+  },
+  "errors": null
+}

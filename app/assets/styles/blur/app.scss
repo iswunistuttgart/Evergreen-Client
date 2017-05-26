@@ -1,0 +1,507 @@
+@import 'theme/conf/_mixins';
+@import 'theme/conf/colorScheme/_mint';
+@import 'theme/conf/_variables';
+@import 'theme/skins/_02_transparent'; // change your theme here
+@import 'theme/_preloader';
+@import "theme/_socicon";
+@import "theme/_layout";
+@import 'theme/buttons';
+@import 'app/buttonsPage';
+@import 'app/tabsPage';
+@import 'app/form';
+@import 'app/table';
+@import 'app/modals';
+@import 'app/notifications';
+@import 'app/typography';
+@import 'theme/bootstrap-overrides/panel';
+@import 'theme/bootstrap-overrides/tabs';
+@import "theme/components/contentTop";
+@import "theme/components/pageTop";
+@import "theme/components/sidebar";
+@import "theme/components/msgCenter";
+@import 'theme/table';
+
+body,
+html {
+  height: 100%;
+}
+
+html {
+  min-height: 520px;
+}
+
+#app {
+  height: 100%;
+}
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  #app {
+    height: auto;
+  }
+}
+
+.form-control,
+.form-control:focus {
+  @include placeholderStyle($default, 0.9);
+  background-color: rgba(0, 0, 0, .4);
+  border-radius: 5px;
+  color: $default;
+}
+
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+  @include placeholderStyle($default, 0.6);
+}
+
+.auth-main {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.auth-block {
+  width: 540px;
+  margin: 0 auto;
+  border-radius: 5px;
+  @include bg-translucent-dark(0.55);
+  color: #fff;
+  padding: 32px;
+
+  h1 {
+    font-weight: $font-light;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
+  a {
+    text-decoration: none;
+    outline: none;
+    transition: all 0.2s ease;
+    color: $primary;
+
+    &:hover {
+      color: $primary-dark;
+    }
+  }
+
+  .control-label {
+    padding-top: 11px;
+    color: $default;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+}
+
+.auth-input {
+  width: 300px;
+  margin-bottom: 24px;
+
+  input {
+    display: block;
+    width: 100%;
+    border: none;
+    font-size: 16px;
+    padding: 4px 10px;
+    outline: none;
+  }
+}
+
+a.forgot-pass {
+  display: block;
+  text-align: right;
+  margin-bottom: -20px;
+  float: right;
+  z-index: 2;
+  position: relative;
+}
+
+.auth-link {
+  display: block;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 33px;
+}
+
+.auth-sep {
+  margin-top: 36px;
+  margin-bottom: 24px;
+  line-height: 20px;
+  font-size: 16px;
+  text-align: center;
+  display: block;
+  position: relative;
+
+  & > span {
+    display: table-cell;
+    width: 30%;
+    white-space: nowrap;
+    padding: 0 24px;
+    color: $default;
+
+    & > span {
+      margin-top: -12px;
+      display: block;
+    }
+  }
+
+  &:after,
+  &:before {
+    border-top: solid 1px $default;
+    content: "";
+    height: 1px;
+    width: 35%;
+    display: table-cell;
+  }
+}
+
+.al-share-auth {
+  text-align: center;
+
+  .al-share {
+    float: none;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+
+    li {
+      margin-left: 24px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      i {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+.btn-auth {
+  background: $primary;
+  color: #ffffff;
+  border-radius: 5px;
+  border-color: $primary;
+  padding: 7px 12px;
+  transition: all 0.1s ease;
+
+  &:hover {
+    color: #ffffff;
+    background: $primary;
+    border-color: $primary;
+    transform: scale(1.2);
+  }
+}
+
+.btn-full {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.btn-with-icon i {
+  margin-right: 5px;
+}
+
+.form-group label {
+  color: #fff;
+  font-size: 14px;
+}
+
+button.btn.btn-default {
+  color: #fff;
+}
+
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+  background-color: rgba(0,0,0,.15);
+  color: #ddd;
+  border-color: transparent;
+}
+
+.page-top-search {
+  width: 32%;
+  line-height: 26px;
+  float: right;
+  color: #fff;
+  overflow: hidden;
+  min-width: 162px;
+  margin: 16px 0 0 30px;
+}
+
+.btn.stand-still:hover {
+  transform: scale(1);
+}
+
+.logoutWrapper {
+  float: left;
+  line-height: 60px;
+  margin-left: 30px;
+  a {
+    font-size: 16px;
+    color: #fff;
+    &:hover {
+      color: #209e91;
+    }
+  }
+}
+
+.al-main {
+  margin-left: 0;
+}
+
+.panel > .panel-heading {
+  color: #fff;
+  padding: 0;
+}
+
+.panel-title {
+  padding: 14px 22px;
+}
+
+.table-hover > tbody > tr:hover {
+  background-color: rgba(0,0,0,.1);
+}
+
+.panel {
+  color: #fff;
+}
+
+.page-top {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+// ######################################################################################################
+
+
+.table {
+    margin-bottom: 0
+}
+
+.table>thead>tr>th:last-child {
+    padding-right: 16px
+}
+
+.table>tbody>tr>tr:first-child {
+    padding-top: 1px
+}
+
+.table>tbody>tr>td {
+    padding: 0 8px;
+    line-height: 35px;
+    border-top: 1px solid rgba(255,255,255,.2)
+}
+
+.table>tbody>tr>td:last-child {
+    padding-right: 16px!important
+}
+
+.table-id {
+    text-align: left!important;
+    width: 40px
+}
+
+.table-arr {
+    width: 5px;
+    padding: 10px 8px 8px 0!important
+}
+
+.table-no-borders {
+    border: none
+}
+
+.table-no-borders td,.table-no-borders th,.table-no-borders tr {
+    border: none!important
+}
+
+.editable-wrap .btn-group.form-control {
+    background-color: transparent
+}
+
+.editable-tr-wrap .editable-wrap {
+    vertical-align: super
+}
+
+.table .header-row th,tr.editable-row input.form-control {
+    vertical-align: middle
+}
+
+.editable-tr-wrap .editable-controls input.editable-input {
+    width: 110px
+}
+
+.editable-tr-wrap td {
+    width: 20%
+}
+
+.editable-table-button {
+    width: 70px
+}
+
+.add-row-editable-table {
+    margin-bottom: 10px
+}
+
+.add-row-editable-table+table {
+    margin-bottom: 5px
+}
+
+.select-page-size-wrap {
+    width: 150px
+}
+
+.table .header-row th {
+    padding: 0 8px
+}
+
+.select-td .editable-select {
+    margin-bottom: 1px
+}
+
+@media screen and (max-width: 1199px) {
+    .editable-tr-wrap .editable-wrap {
+        vertical-align:middle
+    }
+}
+
+.css-switch {
+  /* The switch - the box around the slider */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+
+  /* Hide default HTML checkbox */
+  .switch input {display:none;}
+
+  /* The slider */
+  .slider-switch {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  .slider-switch:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  input:checked + .slider-switch {
+    background-color: #2196F3;
+  }
+
+  input:focus + .slider-switch {
+    box-shadow: 0 0 1px #2196F3;
+  }
+
+  input:checked + .slider-switch:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+
+  /* Rounded sliders */
+  .slider-switch.round {
+    border-radius: 34px;
+  }
+
+  .slider-switch.round:before {
+    border-radius: 50%;
+  }
+}
+
+
+label.custom-checkbox,label.custom-radio {
+    padding-right: 0;
+    padding-left: 0;
+    margin-bottom: 0
+}
+
+label.custom-checkbox>input,label.custom-radio>input {
+    height: 0;
+    z-index: -100!important;
+    opacity: 0;
+    position: absolute
+}
+
+label.custom-checkbox>input:checked+span:before,label.custom-radio>input:checked+span:before {
+    content: "\f00c";
+    font-weight: 300
+}
+
+label.custom-checkbox>input:disabled+span,label.custom-radio>input:disabled+span {
+    color: #ddd;
+    cursor: not-allowed
+}
+
+label.custom-checkbox>input:disabled+span:before,label.custom-radio>input:disabled+span:before {
+    border-color: #ddd!important;
+    cursor: not-allowed
+}
+
+label.custom-checkbox>span,label.custom-radio>span {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    line-height: 16px;
+    font-weight: 300;
+    cursor: pointer;
+    padding-left: 22px;
+    width: 100%
+}
+
+label.custom-checkbox>span:before,label.custom-radio>span:before {
+    cursor: pointer;
+    font-family: fontAwesome;
+    font-weight: 300;
+    font-size: 12px;
+    color: #fff;
+    content: "\a0";
+    background-color: transparent;
+    border: 1px solid #fff;
+    border-radius: 0;
+    display: inline-block;
+    text-align: center;
+    height: 16px;
+    line-height: 14px;
+    min-width: 16px;
+    margin-right: 6px;
+    position: relative;
+    top: 0;
+    margin-left: -22px;
+    float: left;
+}
+
+label.custom-checkbox > input:checked + span:before, label.custom-radio > input:checked + span:before, label.custom-radio > input:checked + span:before {
+  content: "✔";
+}
+
+.circle {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: red;
+}
