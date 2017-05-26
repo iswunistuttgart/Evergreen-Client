@@ -109,6 +109,11 @@ class newPage extends Component {
       })
   }
 
+  componentWillUnmount () {
+    socket.emit('disconnect_all');
+    socket.removeAllListeners("subscription_result");
+  }
+
   initialSubscribe = () => {
     let tasks = [];
 
@@ -124,10 +129,8 @@ class newPage extends Component {
 
           axios.post('/rest/subscribe/create', Object.assign({}, obj, {session: window.sessionStorage.getItem("session")}))
             .then((result) => {
-              socket.emit('subscribe', {contextId: entry.contextId, tolleranceInterval: parseInt(entry.config.tolleranceInterval || 200), session: window.sessionStorage.getItem("session")}, () => {
-                console.log('emitted');
-                callback();
-              });
+              socket.emit('subscribe', {contextId: entry.contextId, tolleranceInterval: parseInt(entry.config.tolleranceInterval || 200), session: window.sessionStorage.getItem("session")});
+              callback();
             })
             .catch((e) => {
               console.error('bb', e);
@@ -331,65 +334,133 @@ class newPage extends Component {
 
   render() {
     return (
-      <div>
-        <div className="top-bar">
-          <div className="top-bar-left">
-            <ul className="menu">
-              <li className="menu-text">Username</li>
-              <li>
-                <a onClick={this.logoutHandler}>Logout</a>
-              </li>
-            </ul>
+      <main>
+        <page-top>
+          <div className="page-top clearfix">
+            <a href className="al-logo clearfix">
+              <span>Ever</span>
+              Green
+            </a>
+            <div className="logoutWrapper">
+              <a href onClick={this.logoutHandler}>Logout</a>
+            </div>
+            <div className="page-top-search">
+              <div className="input-group">
+                <select name="widgetselect" className="form-control" onChange={this.handleInputChange}>
+                  <option value="graph">Graph</option>
+                  <option value="toggle">Toggle Button</option>
+                  <option value="lamp">LED</option>
+                  <option value="inputfield">Inputfield</option>
+                  <option value="outputfield">Outputfield</option>
+                </select>
+                <span className="input-group-btn">
+                  <button className="btn btn-primary stand-still" onClick={this.addWidget}  type="button">Add Widget</button>
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="top-bar-right">
-            <form>
-              <ul className="menu">
-                <li>
-                  <select name="widgetselect" onChange={this.handleInputChange}>
-                    <option value="graph">Graph</option>
-                    <option value="toggle">Toggle Button</option>
-                    <option value="lamp">LED</option>
-                    <option value="inputfield">Inputfield</option>
-                    <option value="outputfield">Outputfield</option>
-                  </select>
-                </li>
-                <li>
-                  <input type="button" className="button" onClick={this.addWidget} value="Add Widget"/>
-                </li>
-              </ul>
-            </form>
+        </page-top>
+        <div className="al-main">
+          <div className="al-content">
+            <content-top>
+              <div className="content-top clearfix">
+                <h1 className="al-title ng-binding">New Page</h1>
+              </div>
+            </content-top>
+            <div>
+              <div className="widgets">
+                <div className="row">
+                  {this.state.widgets && this.state.widgets.map((entry, key) => {
+                    return (
+                      <Widget
+                        key={entry.contextId}
+                        id={entry.contextId}
+                        keyindex={key}
+                        subscribe={this.subscribe}
+                        valueChange={this.handleValueChange}
+                        readVariable={this.readVariable}
+                        writeVariable={this.writeVariable}
+                        widgetType={entry.widgetType}
+                        names={this.state.names}
+                        nodes={this.state.nodes}
+                        value={entry.value}
+                        config={entry.config}
+                        setConfig={this.setConfig}
+                        pageUpdate={this.pageUpdate}
+                        delete={this.deletePage}
+                        setTitle={this.setTitle}
+                        title={entry.title}
+                      />
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex-container">
-          {/* <pre>{JSON.stringify(this.state, false, 2)}</pre> */}
-          {this.state.widgets && this.state.widgets.map((entry, key) => {
-            return (
-              <Widget
-                key={entry.contextId}
-                id={entry.contextId}
-                keyindex={key}
-                subscribe={this.subscribe}
-                valueChange={this.handleValueChange}
-                readVariable={this.readVariable}
-                writeVariable={this.writeVariable}
-                widgetType={entry.widgetType}
-                names={this.state.names}
-                nodes={this.state.nodes}
-                value={entry.value}
-                config={entry.config}
-                setConfig={this.setConfig}
-                pageUpdate={this.pageUpdate}
-                delete={this.deletePage}
-                setTitle={this.setTitle}
-                title={entry.title}
-              />
-            )
-          })
-          }
-        </div>
-      </div>
+      </main>
+    )
 
-    );
+    // return (
+    //   <div>
+    //     <div className="top-bar">
+    //       <div className="top-bar-left">
+    //         <ul className="menu">
+    //           <li className="menu-text">Username</li>
+    //           <li>
+    //             <a onClick={this.logoutHandler}>Logout</a>
+    //           </li>
+    //         </ul>
+    //       </div>
+    //       <div className="top-bar-right">
+    //         <form>
+    //           <ul className="menu">
+    //             <li>
+    //               <select name="widgetselect" onChange={this.handleInputChange}>
+    //                 <option value="graph">Graph</option>
+    //                 <option value="toggle">Toggle Button</option>
+    //                 <option value="lamp">LED</option>
+    //                 <option value="inputfield">Inputfield</option>
+    //                 <option value="outputfield">Outputfield</option>
+    //               </select>
+    //             </li>
+    //             <li>
+    //               <input type="button" className="button" onClick={this.addWidget} value="Add Widget"/>
+    //             </li>
+    //           </ul>
+    //         </form>
+    //       </div>
+    //     </div>
+    //     <div className="flex-container">
+    //       {/* <pre>{JSON.stringify(this.state, false, 2)}</pre> */}
+    //       {this.state.widgets && this.state.widgets.map((entry, key) => {
+    //         return (
+    //           <Widget
+    //             key={entry.contextId}
+    //             id={entry.contextId}
+    //             keyindex={key}
+    //             subscribe={this.subscribe}
+    //             valueChange={this.handleValueChange}
+    //             readVariable={this.readVariable}
+    //             writeVariable={this.writeVariable}
+    //             widgetType={entry.widgetType}
+    //             names={this.state.names}
+    //             nodes={this.state.nodes}
+    //             value={entry.value}
+    //             config={entry.config}
+    //             setConfig={this.setConfig}
+    //             pageUpdate={this.pageUpdate}
+    //             delete={this.deletePage}
+    //             setTitle={this.setTitle}
+    //             title={entry.title}
+    //           />
+    //         )
+    //       })
+    //       }
+    //     </div>
+    //   </div>
+    //
+    // );
   }
 }
 

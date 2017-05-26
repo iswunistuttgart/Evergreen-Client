@@ -3,12 +3,10 @@ import React, {Component} from 'react';
 class ServerBox extends Component {
 
   componentDidMount() {
-    this.props.setSelected(this.props.servers[0]);
+    // this.props.setSelected(this.props.servers[0]);
   }
 
   handleInputChange = (event) => {
-
-    console.log('event', event.target.name);
 
     const target = event.target;
     const value = target.value;
@@ -29,21 +27,32 @@ class ServerBox extends Component {
 
   render() {
     return (
-      <div>
-        <div className="row">
-          <div className="larger-12 columns">
-            <label>Select your Server
-              <select onChange={this.handleInputChange} value={this.props.selectedServer ? this.props.selectedServer.serverName : null}>
-                {this.props.servers.map((entry, key) => {
-                  return (
-                    <option key={key} value={entry.serverName}>{entry.serverName}</option>
-                  )
-                })
-}
-              </select>
-            </label>
-          </div>
-        </div>
+//       <div>
+//         <div className="row">
+//           <div className="larger-12 columns">
+//             <label>Select your Server
+//               <select onChange={this.handleInputChange} value={this.props.selectedServer ? this.props.selectedServer.serverName : null}>
+//                 {this.props.servers.map((entry, key) => {
+//                   return (
+//                     <option key={key} value={entry.serverName}>{entry.serverName}</option>
+//                   )
+//                 })
+// }
+//               </select>
+//             </label>
+//           </div>
+//         </div>
+//       </div>
+      <div className="form-group">
+        <label style={{color: '#fff', fontSize: '16px'}}>Select your server</label>
+        <select className="form-control" onChange={this.handleInputChange} value={this.props.selectedServer ? this.props.selectedServer.serverName : null}>
+          {this.props.servers.map((entry, key) => {
+            return (
+              <option key={key} value={entry.serverName}>{entry.serverName}</option>
+              )
+            })
+          }
+        </select>
       </div>
     );
   }

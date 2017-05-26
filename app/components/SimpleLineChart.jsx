@@ -28,7 +28,7 @@ class SimpleLineChart extends Component {
 
   render() {
     return (
-      <div id={'line' + this.props.id} className="epoch category10" style={{height: '400px', width: '600px'}}></div>
+      <div id={'line' + this.props.id} className="epoch category10" style={{height: '400px', width: '100%'}}></div>
     )
   }
 }

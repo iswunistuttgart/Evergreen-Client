@@ -1540,8 +1540,8 @@ Epoch.Chart.Plot = (function(superClass) {
     tickFormats: {
       top: Epoch.Formats.regular,
       bottom: Epoch.Formats.regular,
-      left: Epoch.Formats.si,
-      right: Epoch.Formats.si
+      left: Epoch.Formats.regular,
+      right: Epoch.Formats.regular
     }
   };
 
@@ -1837,8 +1837,8 @@ Epoch.Chart.Bar = (function(superClass) {
 
   horizontal_specific = {
     tickFormats: {
-      top: Epoch.Formats.si,
-      bottom: Epoch.Formats.si,
+      top: Epoch.Formats.regular,
+      bottom: Epoch.Formats.regular,
       left: Epoch.Formats.regular,
       right: Epoch.Formats.regular
     }
@@ -2449,8 +2449,8 @@ Epoch.Time.Plot = (function(superClass) {
     tickFormats: {
       top: Epoch.Formats.seconds,
       bottom: Epoch.Formats.seconds,
-      left: Epoch.Formats.si,
-      right: Epoch.Formats.si
+      left: Epoch.Formats.regular,
+      right: Epoch.Formats.regular
     }
   };
 

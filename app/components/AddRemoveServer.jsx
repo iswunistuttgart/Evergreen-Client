@@ -132,94 +132,180 @@ class AddRemoveServer extends Component {
 
   render() {
     return (
-      <div>
-        <div className="AddRemoveServer">
-          <button className="dropdown button" type="button" onClick={this.handleShowServer.bind(this)}>Show Server Info</button>
-          <button className="dropdown button" type="button" onClick={this.handleAddServer.bind(this)}>Add Server</button>
-          <button className="dropdown button" type="button" onClick={this.handleDeleteServer.bind(this)}>Remove Server</button>
+      <div className="row">
+        <div className="row">
+          <div className="col-md-4">
+            <button className="btn btn-primary btn-full" type="button" onClick={this.handleShowServer.bind(this)}>Show Server Info</button>
+          </div>
+          <div className="col-md-4">
+            <button className="btn btn-warning btn-full btn-with-icon" type="button" onClick={this.handleAddServer.bind(this)}>
+              <i className="glyphicon glyphicon-plus"></i>
+              Add Server
+            </button>
+          </div>
+          <div className="col-md-4">
+            <button className="btn btn-danger btn-full btn-with-icon" type="button" onClick={this.handleDeleteServer.bind(this)}>
+              <i className="glyphicon glyphicon-minus"></i>
+              Remove Server
+            </button>
+          </div>
         </div>
-
         {this.state.addFlag == true
-          ? <div className="AddServer">
-              <div className="row">
-                <div className="large-12 columns">
-                  <label>
-                    <input name="addServerName" type="text" placeholder="Servername" onChange={this.handleInputChange}/>
-                  </label>
+          ? <div style={{marginTop: '25px'}}>
+              <div className="col-md-12">
+                <div className="form-group">
+                  <input className="form-control" name="addServerName" type="text" placeholder="Servername" onChange={this.handleInputChange}/>
                 </div>
               </div>
-              <div className="row">
-                <div className="large-12 columns">
-                  <label>
-                    <input name="addServerIp" type="text" placeholder="IP" onChange={this.handleInputChange}/>
-                  </label>
+              <div className="col-md-12">
+                <div className="form-group">
+                  <input className="form-control" name="addServerIp" type="text" placeholder="IP" onChange={this.handleInputChange}/>
                 </div>
               </div>
-              <div className="row">
-                <div className="large-12 columns">
-                  <label>
-                    <input name="addServerPort" type="number" placeholder="Port" onChange={this.handleInputChange}/>
-                  </label>
+              <div className="col-md-12">
+                <div className="form-group">
+                  <input className="form-control" name="addServerPort" type="number" placeholder="Port" onChange={this.handleInputChange}/>
                 </div>
               </div>
               {
                 this.state.errorFlag &&
-                <span style={{color: 'red', fontSize: 12}}>{this.state.errorFlag}</span>
+                <span className="col-md-12" style={{color: 'red', fontSize: 14}}>{this.state.errorFlag}</span>
               }
-              <button type="button" className="button expanded" onClick={this.addServer}>Add Server</button>
+              <button type="button" className="btn btn-warning pull-right" onClick={this.addServer}>Add Server</button>
             </div>
-          : null
+            : <span></span>
         }
-
-        {this.state.showFlag &&
-          <div className="ShowServer">
-            <div className="row">
-              <div className="large-12 columns">
-                <label>Server Name
-                  <input type="text" value={this.props.selectedServer.serverName} disabled/>
-                </label>
-              </div>
-            </div>
-            <div className="row">
-              <div className="large-12 columns">
-                <label>Server Address
-                  <input type="text" value={this.props.selectedServer.serverAdress} disabled/>
-                </label>
-              </div>
-            </div>
-            <div className="row">
-              <div className="large-12 columns">
-                <label>Server Port
-                  <input type="number" value={this.props.selectedServer.port} disabled/>
-                </label>
-              </div>
-            </div>
-          </div>
-        }
-
-        {this.state.removeFlag == true
-          ? <div className="RemoveServer">
-              <div className="row">
-                <div className="large-12 columns">
-                  <label>
-                    <select name="removeServerName" onChange={this.handleInputChange}>
-                      {
-                        this.props.servers.map((entry, key) => {
-                          return (
-                            <option key={key} value={entry.serverName}>{entry.serverName}</option>
-                          )
-                        })
-                      }
-                    </select>
-                  </label>
+        {this.state.showFlag == true
+          ? <div style={{marginTop: '25px'}}>
+              <div className="col-md-12">
+                <div className="form-group">
+                  <input className="form-control" value={this.props.selectedServer.serverName} type="text" disabled/>
                 </div>
               </div>
-              <button type="button" className="button expanded" onClick={this.removeServer}>Remove Server</button>
+              <div className="col-md-12">
+                <div className="form-group">
+                  <input className="form-control" value={this.props.selectedServer.serverAdress} type="text" disabled/>
+                </div>
+              </div>
+              <div className="col-md-12">
+                <div className="form-group">
+                  <input className="form-control" value={this.props.selectedServer.port} type="number" disabled/>
+                </div>
+              </div>
             </div>
-          : null
+            : <span></span>
+        }
+        {this.state.removeFlag == true
+          ? <div style={{marginTop: '25px'}}>
+              <div className="col-md-12">
+                <div className="form-group">
+                  <select className="form-control" name="removeServerName" onChange={this.handleInputChange}>
+                    <option>Choose server to remove</option>
+                    {
+                      this.props.servers.map((entry, key) => {
+                        return (
+                          <option key={key} value={entry.serverName}>{entry.serverName}</option>
+                        )
+                      })
+                    }
+                  </select>
+                </div>
+              </div>
+              <button type="button" className="btn btn-danger pull-right" onClick={this.removeServer}>Remove Server</button>
+            </div>
+          : <span></span>
         }
       </div>
-    );
+    )
+    // return (
+    //   <div>
+    //     <div className="AddRemoveServer">
+    //       <button className="dropdown button" type="button" onClick={this.handleShowServer.bind(this)}>Show Server Info</button>
+    //       <button className="dropdown button" type="button" onClick={this.handleAddServer.bind(this)}>Add Server</button>
+    //       <button className="dropdown button" type="button" onClick={this.handleDeleteServer.bind(this)}>Remove Server</button>
+    //     </div>
+    //
+    //     {this.state.addFlag == true
+    //       ? <div className="AddServer">
+    //           <div className="row">
+    //             <div className="large-12 columns">
+    //               <label>
+    //                 <input name="addServerName" type="text" placeholder="Servername" onChange={this.handleInputChange}/>
+    //               </label>
+    //             </div>
+    //           </div>
+    //           <div className="row">
+    //             <div className="large-12 columns">
+    //               <label>
+    //                 <input name="addServerIp" type="text" placeholder="IP" onChange={this.handleInputChange}/>
+    //               </label>
+    //             </div>
+    //           </div>
+    //           <div className="row">
+    //             <div className="large-12 columns">
+    //               <label>
+    //                 <input name="addServerPort" type="number" placeholder="Port" onChange={this.handleInputChange}/>
+    //               </label>
+    //             </div>
+    //           </div>
+    //           {
+    //             this.state.errorFlag &&
+    //             <span style={{color: 'red', fontSize: 12}}>{this.state.errorFlag}</span>
+    //           }
+    //           <button type="button" className="button expanded" onClick={this.addServer}>Add Server</button>
+    //         </div>
+    //       : null
+    //     }
+    //
+    //     {this.state.showFlag &&
+    //       <div className="ShowServer">
+    //         <div className="row">
+    //           <div className="large-12 columns">
+    //             <label>Server Name
+    //               <input type="text" value={this.props.selectedServer.serverName} disabled/>
+    //             </label>
+    //           </div>
+    //         </div>
+    //         <div className="row">
+    //           <div className="large-12 columns">
+    //             <label>Server Address
+    //               <input type="text" value={this.props.selectedServer.serverAdress} disabled/>
+    //             </label>
+    //           </div>
+    //         </div>
+    //         <div className="row">
+    //           <div className="large-12 columns">
+    //             <label>Server Port
+    //               <input type="number" value={this.props.selectedServer.port} disabled/>
+    //             </label>
+    //           </div>
+    //         </div>
+    //       </div>
+    //     }
+    //
+    //     {this.state.removeFlag == true
+    //       ? <div className="RemoveServer">
+    //           <div className="row">
+    //             <div className="large-12 columns">
+    //               <label>
+    //                 <select name="removeServerName" onChange={this.handleInputChange}>
+    //                   {
+    //                     this.props.servers.map((entry, key) => {
+    //                       return (
+    //                         <option key={key} value={entry.serverName}>{entry.serverName}</option>
+    //                       )
+    //                     })
+    //                   }
+    //                 </select>
+    //               </label>
+    //             </div>
+    //           </div>
+    //           <button type="button" className="button expanded" onClick={this.removeServer}>Remove Server</button>
+    //         </div>
+    //       : null
+    //     }
+    //   </div>
+    // );
   }
 }
 

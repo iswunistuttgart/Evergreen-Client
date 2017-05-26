@@ -86,6 +86,34 @@ module.exports = function(io) {
         }
       }, oldIntervalTollerance);
     })
+
+    socket.on('disconnect_all', function () {
+      var tempSub;
+      clearInterval(newInterval);
+
+      if (users[socket.id]) {
+        if (users[socket.id].contextIds.length > 1) {
+          tempSub = users[socket.id].contextIds;
+        } else {
+          tempSub = users[socket.id].contextIds[0]
+        }
+
+        var args = {
+          auth: {
+            AuthSession: users[socket.id].session
+          },
+          unsubscribeItems: {
+            VarSubscriptions: tempSub
+          }
+        };
+        soap.createClient(webServiceUrl, function(err, client) {
+          client.Unsubscribe(args, function(err, result) {
+            console.log(JSON.stringify(result));
+          });
+        });
+      }
+    })
+
     socket.on('disconnect', function() {
       delete sockets[socket.id];
       clearInterval(newInterval);

@@ -48,20 +48,31 @@ class LoginApp extends Component {
 
   render () {
     return (
-      <div>
-        <h1 className="page-title">Evergreen-Client</h1>
-        <div className="row">
-          <div className="column small-centered small-11 medium-6 large-5">
-            <div className="container">
-              <form>
-                <ServerBox servers={this.state.servers} setSelected={this.setSelected} selectedServer={this.state.selected}/>
-                <AddRemoveServer servers={this.state.servers} refreshServers={this.refreshServers} selectedServer={this.state.selected}/>
-                <Login router={this.context.router} selectedServer={this.state.selected}/>
-              </form>
-            </div>
-          </div>
+      // <div>
+      //   <h1 className="page-title">Evergreen-Client</h1>
+      //   <div className="row">
+      //     <div className="column small-centered small-11 medium-6 large-5">
+      //       <div className="container">
+      //         <form>
+      //           <ServerBox servers={this.state.servers} setSelected={this.setSelected} selectedServer={this.state.selected}/>
+      //           <AddRemoveServer servers={this.state.servers} refreshServers={this.refreshServers} selectedServer={this.state.selected}/>
+      //           <Login router={this.context.router} selectedServer={this.state.selected}/>
+      //         </form>
+      //       </div>
+      //     </div>
+      //   </div>
+      // </div>
+      <main className="auth-main">
+        <div className="auth-block">
+          <h1>Evergreen</h1>
+
+          <form className="form-horizontal">
+            <ServerBox servers={this.state.servers} setSelected={this.setSelected} selectedServer={this.state.selected}/>
+            <AddRemoveServer servers={this.state.servers} refreshServers={this.refreshServers} selectedServer={this.state.selected}/>
+            <Login router={this.context.router} selectedServer={this.state.selected}/>
+          </form>
         </div>
-      </div>
+      </main>
     );
   }
 }

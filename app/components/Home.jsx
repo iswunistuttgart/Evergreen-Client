@@ -193,6 +193,7 @@ class Home extends Component {
             ],
             pageCreateInputFlag: null
           }), () => {
+            this.refs['pageCreateInput' + index].value = '';
             this.saveChange(true);
           })
         } else if (Object.prototype.toString.call( this.state.groups[index].Pages ) === '[object Array]') {
@@ -209,6 +210,7 @@ class Home extends Component {
             ],
             pageCreateInputFlag: null
           }), () => {
+            this.refs['pageCreateInput' + index].value = '';
             this.saveChange(true);
           })
         } else {
@@ -222,6 +224,7 @@ class Home extends Component {
             ],
             pageCreateInputFlag: null
           }), () => {
+            this.refs['pageCreateInput' + index].value = '';
             this.saveChange(true);
           })
         }
@@ -320,105 +323,222 @@ class Home extends Component {
 
   render() {
     return (
-      <div>
+      <main>
         <Home_Nav createHandler={this.createHandler} router={this.context.router}/>
-        {/* <pre>{JSON.stringify(this.state.groups, false, 2)}</pre> */}
-        <ul className="flex-container">
-          {this.state.groups && this.state.groups.map((entry, index) => {
-            return (
-              <li key={entry.Index} className="flex-item">
-                <ul className="list-group">
-                  <li className="list-group-item active">
-                    <div className="handleGroupname">
-                      <button onClick={() => {this.setState({groupInputFlag: index})}}>
-                        Rename
-                      </button>
-                      <button onClick={() => {this.deleteHandler(index)}}>
-                        Delete
-                      </button>
-                    </div>
-                    { this.state.groupInputFlag === index ?
-                      <div>
-                        <input ref={`groupInput${index}`} type="text" defaultValue={entry.Title}/>
-                        <button type="submit" onClick={() => this.renameHandler(index)}>Save</button>
-                      </div>
-                      :
-                      <span>{entry.Title}</span>
-                    }
-                  </li>
-                  { entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Array]' && entry.Pages.map((page, pageIndex) => {
+        <div className="al-main">
+          <div className="al-content">
+            <content-top>
+              <div className="content-top clearfix">
+                <h1 className="al-title ng-binding">Home</h1>
+              </div>
+            </content-top>
+            <div>
+              <div className="widgets">
+                <div className="row">
+                  {this.state.groups && this.state.groups.map((entry, index) => {
                     return (
-                      <li key={pageIndex} className="list-group-item">
-                        <div className="handleGroupname">
-                          <button onClick={() => {this.setState({pageEditInputFlag: {index: index, pageIndex: pageIndex}})}}>
-                            Rename
-                          </button>
-                          <button onClick={() => {this.pageDeleteHandler(index, pageIndex)}}>
-                            Delete
-                          </button>
-                        </div>
-                        { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === pageIndex) ?
-                          <div>
-                            <input ref={`pageEditInput${index}arr${pageIndex}`} type="text" defaultValue={page.Title}/>
-                            <button type="submit" onClick={() => this.pageEditHandler(index, pageIndex, page)}>Save</button>
+                      <div className="col-lg-4 col-md-6" key={entry.Index}>
+                        <div>
+                          <div className="panel panel-blur animated">
+                            <div className="panel-heading clearfix">
+                              <div className="col-sm-6" style={{padding: 0}}>
+                                {this.state.groupInputFlag === index
+                                  ? <input ref={`groupInput${index}`} type="text" defaultValue={entry.Title} className="form-control" style={{margin: '5px'}}/>
+                                  : <h3 className="panel-title">{entry.Title}</h3>
+                                }
+                              </div>
+                              <div className="col-sm-6" style={{padding: '5px', paddingRight: '22px'}}>
+                                {this.state.groupInputFlag === index
+                                  ? <button className="btn btn-default pull-right" onClick={() => {this.setState({groupInputFlag: null})}}>Cancel</button>
+                                  : <button className="btn btn-danger pull-right" onClick={() => {this.deleteHandler(index)}}>Delete</button>
+                                }
+                                {this.state.groupInputFlag === index
+                                  ? <button className="btn btn-primary pull-right" style={{marginRight: '5px'}} onClick={() => {this.renameHandler(index)}}>Save</button>
+                                  : <button className="btn btn-default pull-right" style={{marginRight: '5px'}} onClick={() => {this.setState({groupInputFlag: index})}}>Rename</button>
+                                }
+
+                              </div>
+                            </div>
+                            <div className="panel-body">
+                              <div className="add-row-editable-table">
+                                {/* <div className="col-md-6"> */}
+                                  <div className="input-group">
+                                    <input type="text" ref={`pageCreateInput${index}`}  className="form-control" placeholder="Sitename"/>
+                                    <span className="input-group-btn">
+                                      <button className="btn btn-primary stand-still" onClick={() => this.pageCreateHandler(index)} type="button">Add new site</button>
+                                    </span>
+                                  </div>
+                                {/* </div> */}
+                                { entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Array]' &&
+                                  <table className="table table-hover" style={{marginTop: '20px'}}>
+                                    <tbody>
+                                      { entry.Pages.map((page, pageIndex) => {
+                                        return (
+                                          <tr key={pageIndex}>
+                                            <td>
+                                              { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === pageIndex)
+                                                ? <input className="form-control input-xs" ref={`pageEditInput${index}arr${pageIndex}`} type="text" defaultValue={page.Title}/>
+                                                : <a style={{color: '#fff'}} href={'#/newPage/' + page.Id}>{page.Title}</a>
+                                              }
+                                            </td>
+                                            <td style={{textAlign: 'right'}}>
+                                              { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === pageIndex)
+                                                ? <div>
+                                                  <button className="btn btn-primary btn-xs" style={{marginRight: '5px'}} onClick={() => this.pageEditHandler(index, pageIndex, page)}>Save</button>
+                                                  <button className="btn btn-default btn-xs" onClick={() => {this.setState({pageEditInputFlag: null})}}>Cancel</button>
+                                                </div>
+                                                : <div>
+                                                  <button className="btn btn-default btn-xs" style={{marginRight: '5px'}} onClick={() => {this.setState({pageEditInputFlag: {index: index, pageIndex: pageIndex}})}}>Rename</button>
+                                                  <button className="btn btn-danger btn-xs" onClick={() => {this.pageDeleteHandler(index, pageIndex)}}>Delete</button>
+                                                </div>
+                                              }
+                                            </td>
+                                          </tr>
+                                        )
+                                      })}
+                                    </tbody>
+                                  </table>
+                                }
+                                { entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Object]' &&
+                                <table className="table table-hover" style={{marginTop: '20px'}}>
+                                  <tbody>
+                                    <tr>
+                                      <td>
+                                        { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === null)
+                                          ? <input className="form-control input-xs" ref={`pageEditInput${index}`} type="text" defaultValue={entry.Pages.Title}/>
+                                          : <a style={{color: '#fff'}} href={'#/newPage/' + entry.Pages.Id}>{entry.Pages.Title}</a>
+                                        }
+                                      </td>
+                                      <td style={{textAlign: 'right'}}>
+                                        { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === null)
+                                          ? <div>
+                                            <button className="btn btn-primary btn-xs" style={{marginRight: '5px'}} onClick={() => this.pageEditHandler(index, null, entry.Pages)}>Save</button>
+                                            <button className="btn btn-default btn-xs" onClick={() => {this.setState({pageEditInputFlag: null})}}>Cancel</button>
+                                          </div>
+                                          : <div>
+                                            <button className="btn btn-default btn-xs" style={{marginRight: '5px'}} onClick={() => {this.setState({pageEditInputFlag: {index: index, pageIndex: null}})}}>Rename</button>
+                                            <button className="btn btn-danger btn-xs" onClick={() => {this.pageDeleteHandler(index)}}>Delete</button>
+                                          </div>
+                                        }
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                }
+                              </div>
+                            </div>
                           </div>
-                          :
-                          <a href={'#/newPage/' + page.Id}>{page.Title}</a>
-                        }
-                      </li>
+                        </div>
+                      </div>
                     )
                   })}
-
-                  { entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Object]' &&
-                    <li className="list-group-item">
-                      <div className="handleGroupname">
-                        <button onClick={() => {this.setState({pageEditInputFlag: {index: index, pageIndex: null}})}}>
-                          Rename
-                        </button>
-                        <button onClick={() => {this.pageDeleteHandler(index)}}>
-                          Delete
-                        </button>
-                      </div>
-                      { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === null) ?
-                        <div>
-                          <input ref={`pageEditInput${index}`} type="text" defaultValue={entry.Pages.Title}/>
-                          <button type="submit" onClick={() => this.pageEditHandler(index, null, entry.Pages)}>Save</button>
-                        </div>
-                        :
-                        <a href={'#/newPage/' + entry.Pages.Id}>{entry.Pages.Title}</a>
-                      }
-                    </li>
-                  }
-                  { this.state.pageCreateInputFlag === index ?
-                    <div>
-                      <input ref={`pageCreateInput${index}`} type="text"/>
-                      <button type="submit" onClick={() => this.pageCreateHandler(index)}>Save</button>
-                    </div>
-                    :
-                    <button className="dropdown button" type="button" onClick={() => {this.pageCreateToggle(index)}}>Add new site</button>
-                  }
-                </ul>
-              </li>
-            )
-          })}
-
-          {/* <li className="flex-item">
-            <ul className="list-group">
-              <li className="list-group-item active">Groupname</li>
-              <button className="dropdown button" type="button">Add new site</button>
-
-              <div className="large-12 columns">
-                <label>
-                  <input name="addServerName" type="text" placeholder="Sitename" onChange={this.handleInputChange}/>
-                </label>
+                </div>
               </div>
-              <button type="button" className="button expanded" onClick={this.addServer}>Add new site</button>
-
-            </ul>
-          </li> */}
-        </ul>
-      </div>
-    );
+            </div>
+          </div>
+        </div>
+      </main>
+    )
+    // return (
+    //   <div>
+    //     <Home_Nav createHandler={this.createHandler} router={this.context.router}/>
+    //     {/* <pre>{JSON.stringify(this.state.groups, false, 2)}</pre> */}
+    //     <ul className="flex-container">
+    //       {this.state.groups && this.state.groups.map((entry, index) => {
+    //         return (
+    //           <li key={entry.Index} className="flex-item">
+    //             <ul className="list-group">
+    //               <li className="list-group-item active">
+    //                 <div className="handleGroupname">
+    //                   <button onClick={() => {this.setState({groupInputFlag: index})}}>
+    //                     Rename
+    //                   </button>
+    //                   <button onClick={() => {this.deleteHandler(index)}}>
+    //                     Delete
+    //                   </button>
+    //                 </div>
+    //                 { this.state.groupInputFlag === index ?
+    //                   <div>
+    //                     <input ref={`groupInput${index}`} type="text" defaultValue={entry.Title}/>
+    //                     <button type="submit" onClick={() => this.renameHandler(index)}>Save</button>
+    //                   </div>
+    //                   :
+    //                   <span>{entry.Title}</span>
+    //                 }
+    //               </li>
+    //               { entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Array]' && entry.Pages.map((page, pageIndex) => {
+    //                 return (
+    //                   <li key={pageIndex} className="list-group-item">
+    //                     <div className="handleGroupname">
+    //                       <button onClick={() => {this.setState({pageEditInputFlag: {index: index, pageIndex: pageIndex}})}}>
+    //                         Rename
+    //                       </button>
+    //                       <button onClick={() => {this.pageDeleteHandler(index, pageIndex)}}>
+    //                         Delete
+    //                       </button>
+    //                     </div>
+    //                     { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === pageIndex) ?
+    //                       <div>
+    //                         <input ref={`pageEditInput${index}arr${pageIndex}`} type="text" defaultValue={page.Title}/>
+    //                         <button type="submit" onClick={() => this.pageEditHandler(index, pageIndex, page)}>Save</button>
+    //                       </div>
+    //                       :
+    //                       <a href={'#/newPage/' + page.Id}>{page.Title}</a>
+    //                     }
+    //                   </li>
+    //                 )
+    //               })}
+    //
+    //               { entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Object]' &&
+    //                 <li className="list-group-item">
+    //                   <div className="handleGroupname">
+    //                     <button onClick={() => {this.setState({pageEditInputFlag: {index: index, pageIndex: null}})}}>
+    //                       Rename
+    //                     </button>
+    //                     <button onClick={() => {this.pageDeleteHandler(index)}}>
+    //                       Delete
+    //                     </button>
+    //                   </div>
+    //                   { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === null) ?
+    //                     <div>
+    //                       <input ref={`pageEditInput${index}`} type="text" defaultValue={entry.Pages.Title}/>
+    //                       <button type="submit" onClick={() => this.pageEditHandler(index, null, entry.Pages)}>Save</button>
+    //                     </div>
+    //                     :
+    //                     <a href={'#/newPage/' + entry.Pages.Id}>{entry.Pages.Title}</a>
+    //                   }
+    //                 </li>
+    //               }
+    //               { this.state.pageCreateInputFlag === index ?
+    //                 <div>
+    //                   <input ref={`pageCreateInput${index}`} type="text"/>
+    //                   <button type="submit" onClick={() => this.pageCreateHandler(index)}>Save</button>
+    //                 </div>
+    //                 :
+    //                 <button className="dropdown button" type="button" onClick={() => {this.pageCreateToggle(index)}}>Add new site</button>
+    //               }
+    //             </ul>
+    //           </li>
+    //         )
+    //       })}
+    //
+    //       {/* <li className="flex-item">
+    //         <ul className="list-group">
+    //           <li className="list-group-item active">Groupname</li>
+    //           <button className="dropdown button" type="button">Add new site</button>
+    //
+    //           <div className="large-12 columns">
+    //             <label>
+    //               <input name="addServerName" type="text" placeholder="Sitename" onChange={this.handleInputChange}/>
+    //             </label>
+    //           </div>
+    //           <button type="button" className="button expanded" onClick={this.addServer}>Add new site</button>
+    //
+    //         </ul>
+    //       </li> */}
+    //     </ul>
+    //   </div>
+    // );
   }
 }
 

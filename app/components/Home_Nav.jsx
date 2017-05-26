@@ -18,34 +18,58 @@ class Home_Nav extends Component {
 
   render() {
     return (
-      <div>
-        <div className="top-bar">
-          <div className="top-bar-left">
-            <ul className="menu">
-              <li className="menu-text">Username</li>
-              <li>
-                <a onClick={this.logoutHandler}>Logout</a>
-              </li>
-            </ul>
+      <page-top>
+        <div className="page-top clearfix">
+          <a href className="al-logo clearfix">
+            <span>Ever</span>
+            Green
+          </a>
+          <div className="logoutWrapper">
+            <a href onClick={this.logoutHandler}>Logout</a>
           </div>
-          <div className="top-bar-right">
-            <form onSubmit={this.OnAddGroup}>
-              <ul className="menu">
-                <li>
-                  <input type="search" placeholder="type new groupname" ref="search"/>
-                </li>
-                <li>
-                  <input ref="addGroupInput" type="submit" onClick={() => {
-                    this.props.createHandler(this.refs.search.value);
-                    this.refs.search.value = ''
-                  }} className="button" value="Add Group"/>
-                </li>
-              </ul>
-            </form>
+          <div className="page-top-search">
+            <div className="input-group">
+              <input type="search" className="form-control" ref="search" placeholder="Type new groupname"/>
+              <span className="input-group-btn">
+                <button className="btn btn-primary stand-still" ref="addGroupInput" onClick={() => {
+                                this.props.createHandler(this.refs.search.value);
+                                this.refs.search.value = ''
+                              }}  type="button">Add Group</button>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-    );
+      </page-top>
+    )
+    // return (
+    //   <div>
+    //     <div className="top-bar">
+    //       <div className="top-bar-left">
+    //         <ul className="menu">
+    //           <li className="menu-text">Username</li>
+    //           <li>
+    //             <a onClick={this.logoutHandler}>Logout</a>
+    //           </li>
+    //         </ul>
+    //       </div>
+    //       <div className="top-bar-right">
+    //         <form onSubmit={this.OnAddGroup}>
+    //           <ul className="menu">
+    //             <li>
+    //               <input type="search" placeholder="type new groupname" ref="search"/>
+    //             </li>
+    //             <li>
+    //               <input ref="addGroupInput" type="submit" onClick={() => {
+    //                 this.props.createHandler(this.refs.search.value);
+    //                 this.refs.search.value = ''
+    //               }} className="button" value="Add Group"/>
+    //             </li>
+    //           </ul>
+    //         </form>
+    //       </div>
+    //     </div>
+    //   </div>
+    // );
   }
 }
 

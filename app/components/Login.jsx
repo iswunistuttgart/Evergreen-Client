@@ -67,35 +67,60 @@ class Login extends Component {
 
   render() {
     return (
-      <div className="Login">
-        <div className="row">
-          <div className="large-12 columns">
-            <label>
-              <input name="username" onChange={this.handleInputChange} type="text" placeholder="Username"/>
-            </label>
+      <div className="row" style={{marginTop: '25px'}}>
+        <div className="col-md-12">
+          <div className="form-group">
+            <input className="form-control" type="text" name="username" onChange={this.handleInputChange} placeholder="Username"/>
           </div>
         </div>
-        <div className="row">
-          <div className="large-12 columns">
-            <label>
-              <input name="password" onChange={this.handleInputChange} type="password" placeholder="Password"/>
-            </label>
+        <div className="col-md-12">
+          <div className="form-group">
+            <input className="form-control" type="password" name="password" onChange={this.handleInputChange} placeholder="Password"/>
           </div>
         </div>
-        {!this.props.loginError && this.state.errorFlag && <span style={{
-          color: 'red',
-          fontSize: 12
-        }}>{this.state.errorFlag}</span>
-}
-        {this.props.loginError && <span style={{
-          color: 'red',
-          fontSize: 12
-        }}>{this.props.loginError}</span>
-}
-        <button type="button" onClick={this.handleLogin} className="button expanded">Login</button>
+        {!this.props.loginError && this.state.errorFlag && <span className="col-md-12" style={{
+            color: 'red',
+            fontSize: '14px'
+          }}>{this.state.errorFlag}</span>
+        }
+        {this.props.loginError && <span className="col-md-12" style={{
+            color: 'red',
+            fontSize: '14px'
+          }}>{this.props.loginError}</span>
+        }
+        <button type="button" onClick={this.handleLogin} className="btn btn-auth btn-default pull-right" style={{paddingRight: '30px', paddingLeft: '30px'}}>Login</button>
       </div>
-
-    );
+    )
+//     return (
+//       <div className="Login">
+//         <div className="row">
+//           <div className="large-12 columns">
+//             <label>
+//               <input name="username" onChange={this.handleInputChange} type="text" placeholder="Username"/>
+//             </label>
+//           </div>
+//         </div>
+//         <div className="row">
+//           <div className="large-12 columns">
+//             <label>
+//               <input name="password" onChange={this.handleInputChange} type="password" placeholder="Password"/>
+//             </label>
+//           </div>
+//         </div>
+//         {!this.props.loginError && this.state.errorFlag && <span style={{
+//           color: 'red',
+//           fontSize: 12
+//         }}>{this.state.errorFlag}</span>
+// }
+//         {this.props.loginError && <span style={{
+//           color: 'red',
+//           fontSize: 12
+//         }}>{this.props.loginError}</span>
+// }
+//         <button type="button" onClick={this.handleLogin} className="button expanded">Login</button>
+//       </div>
+//
+//     );
   }
 }
 

@@ -1176,7 +1176,7 @@
   </wsdl:binding>
   <wsdl:service name="EvergreenWebService">
     <wsdl:port name="EvergreenBinding" binding="tns:EvergreenBinding">
-      <soap:address location="http://192.168.178.58:18083/malso/services/EvergreenWebService/"/>
+      <soap:address location="http://192.168.56.102:18083/malso/services/EvergreenWebService/"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
