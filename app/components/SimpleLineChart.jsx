@@ -12,6 +12,8 @@ class SimpleLineChart extends Component {
 
     this.data = [];
 
+    console.log('aaaa', $.plot);
+
 		this.plot = $.plot("#flotplaceholder" + this.props.id, [ this.data ], {
 			series: {
 				shadowSize: 0	// Drawing is faster without shadows
@@ -23,7 +25,7 @@ class SimpleLineChart extends Component {
 				mode: "time",
         timeformat: "%H:%M:%S",
         show: true,
-        timezone: 'browser'
+        timezone: 'browser',
 			},
       grid: {
         hoverable: true,
@@ -34,7 +36,7 @@ class SimpleLineChart extends Component {
     this.myInterval = setInterval(() => {
       this.plot.setData([this.data])
       this.plot.setupGrid();
-
+      this.plot.resize();
       this.plot.draw();
     }, 100)
   }

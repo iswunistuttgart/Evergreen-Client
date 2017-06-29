@@ -71,12 +71,12 @@ class Login extends Component {
       <div className="row" style={{marginTop: '25px'}}>
         <div className="col-md-12">
           <div className="form-group">
-            <input className="form-control" type="text" name="username" onChange={this.handleInputChange} placeholder="Username"/>
+            <input className="form-control" type="text" name="username" onChange={this.handleInputChange} onKeyPress={(event) => {if (event.key == 'Enter') this.handleLogin();}}  placeholder="Username"/>
           </div>
         </div>
         <div className="col-md-12">
           <div className="form-group">
-            <input className="form-control" type="password" name="password" onChange={this.handleInputChange} placeholder="Password"/>
+            <input className="form-control" type="password" name="password" onChange={this.handleInputChange} onKeyPress={(event) => {if (event.key == 'Enter') this.handleLogin();}}  placeholder="Password"/>
           </div>
         </div>
         {!this.props.loginError && this.state.errorFlag && <span className="col-md-12" style={{

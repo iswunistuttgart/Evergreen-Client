@@ -191,13 +191,36 @@ module.exports = {
               try {
                 tempData.ConfigXML = JSON.parse(tempData.ConfigXML);
                 if (!tempData.ConfigXML) {
-                  tempData.ConfigXML = [];
+                  tempData.widgets = [];
+                  tempData.order = [];
+                } else {
+                  tempData.widgets = tempData.ConfigXML.widgets;
+                  tempData.order = tempData.ConfigXML.order;
                 }
               } catch (e) {
-                tempData.ConfigXML = [];
+                tempData.widgets = [];
+                tempData.order = [];
               }
             } else {
-              tempData.ConfigXML = [];
+              tempData.widgets = [];
+              tempData.order = [];
+            }
+
+            if (tempData.order && tempData.widgets && tempData.widgets.length && tempData.order.length) {
+              let result = [];
+              let items = JSON.parse(JSON.stringify(tempData.widgets));
+              tempData.order.forEach(function (key) {
+                var found = false;
+                items = items.filter(function (item) {
+                  if (!found && item.contextId == key) {
+                    result.push(item);
+                    found = true;
+                    return false;
+                  } else
+                    return true;
+                })
+              })
+              tempData.widgets = result;
             }
 
             res.send(tempData);

@@ -39,9 +39,7 @@ class Widget extends Component {
 
   handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      if (this.props.config.machineId && this.props.config.varId) {
-        this.setWidgetHandle();
-      }
+      this.setWidgetHandle();
     }
   }
 
@@ -81,15 +79,26 @@ class Widget extends Component {
     }
   }
 
+  // keyPressHandler = (event) => {
+  //   if (event.key == 'Enter') {
+  //     this.setWidgetHandle()
+  //   }
+  // }
+
   render() {
     return (
-      <div className="col-lg-4 col-md-6">
-        <div>
-          <div className="panel panel-blur animated">
+        <div data-gridkey={this.props.id} className="grid-item">
+          <div className="panel panel-blur animated with-scroll panel-widget">
             <div className="panel-heading clearfix">
               <div className="col-sm-6" style={{padding: 0}}>
                 {this.state.renameFlag
-                  ? <input ref={`renameInput`}  type="text" defaultValue={this.props.title} className="form-control" style={{margin: '5px'}}/>
+                  ? <input ref={`renameInput`}  type="text" defaultValue={this.props.title} onKeyPress={
+                              (event) => {
+                                if (event.key == 'Enter') {
+                                  this.renameHandler();
+                                }
+                              }
+                      } className="form-control" style={{margin: '5px'}}/>
                   : <h3 className="panel-title">{this.props.title}</h3>
                 }
               </div>
@@ -144,7 +153,7 @@ class Widget extends Component {
               }
               <hr/>
               {!this.state.configureFlag &&
-                <button className="btn btn-primary button-with-icon" onClick={()=>{this.setState({configureFlag: true})}}>
+                <button className="btn btn-primary button-with-icon" onClick={()=>{this.props.gridLayout(); this.setState({configureFlag: true})}}>
                   {/* <i className="glyphicon glyphicon-plus"></i> */}
                   Configure Widget
                 </button>
@@ -170,7 +179,7 @@ class Widget extends Component {
                     </div>
                     <div className="form-group">
                       <label>Bind value</label>
-                      <select className="form-control" ref="bindValue" value={this.props.config.varId} name="varId" onChange={this.handleConfigValueChange}>
+                      <select className="form-control" ref="bindValue" value={this.props.config.varId} name="varId" onChange={this.handleConfigValueChange} onKeyPress={this.handleKeyPress}>
                         <option value="">Choose</option>
                         {
                           (this.props.nodes && this.props.nodes.length) ? this.props.nodes.map((entry) => {
@@ -185,12 +194,12 @@ class Widget extends Component {
                     </div>
                     <div className="form-group">
                       <label>Update intervall in milliseconds
-                        <input className="form-control" type="number" value={this.props.config.tolleranceInterval} ref="tolleranceInterval" name="tolleranceInterval" onChange={this.handleConfigValueChange}/>
+                        <input className="form-control" type="number" value={this.props.config.tolleranceInterval} ref="tolleranceInterval" name="tolleranceInterval" onChange={this.handleConfigValueChange} onKeyPress={this.handleKeyPress}/>
                       </label>
                     </div>
                     <div className="form-group">
                       <label className="checkbox-inline custom-checkbox nowrap">
-                        <input type="checkbox" id="inlineCheckbox01" checked={this.props.config.isSubscribe} ref="subscribe" name="isSubscribe" onChange={this.handleConfigCheckChange}/>
+                        <input type="checkbox" id="inlineCheckbox01" checked={this.props.config.isSubscribe} onKeyPress={this.handleKeyPress} ref="subscribe" name="isSubscribe" onChange={this.handleConfigCheckChange}/>
                         <span>Activate Subscribe (Dataupdate)</span>
                       </label>
                     </div>
@@ -205,7 +214,6 @@ class Widget extends Component {
             </div>
           </div>
         </div>
-      </div>
     );
     // return (
     //   <ul className="list-group widget-group">

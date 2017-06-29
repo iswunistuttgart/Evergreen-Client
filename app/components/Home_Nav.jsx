@@ -23,15 +23,24 @@ class Home_Nav extends Component {
     }).catch((e) => {})
   }
 
+  backHandler = () => {
+    history.back();
+  }
+
   render() {
     return (
       <page-top>
         <div className="page-top clearfix">
+          <div className="left-button" onClick={this.backHandler}>
+            <span className="button-wrapper">
+              <i className="glyphicon glyphicon-menu-left"></i>
+            </span>
+          </div>
           <a href="/" className="al-logo clearfix">
             <span>Ever</span>
             Green
           </a>
-          <div style={{
+          <div className="user-name" style={{
               marginLeft: '25px',
               color: '#ffffff',
               fontSize: '24px',
@@ -45,7 +54,10 @@ class Home_Nav extends Component {
           </div>
           <div className="page-top-search">
             <div className="input-group">
-              <input type="search" className="form-control" ref="search" placeholder="Type new groupname"/>
+              <input type="search" className="form-control" ref="search" placeholder="Type new groupname" onKeyPress={(event) => {if (event.key == 'Enter') {
+                              this.props.createHandler(this.refs.search.value);
+                              this.refs.search.value = ''
+                            }}}/>
               <span className="input-group-btn">
                 <button className="btn btn-primary stand-still" ref="addGroupInput" onClick={() => {
                                 this.props.createHandler(this.refs.search.value);

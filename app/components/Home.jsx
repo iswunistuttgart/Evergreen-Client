@@ -17,8 +17,45 @@ class Home extends Component {
 
   componentDidMount() {
     axios.post('/rest/pageconfig/get', {session: window.sessionStorage.getItem("session")}).then((userPageConfig) => {
-      console.log('aa', userPageConfig.data);
-      this.setState({groups: userPageConfig.data.Groups, ownerId: userPageConfig.data.OwnerId})
+
+      if (!userPageConfig.data.Groups) {
+        userPageConfig.data.Groups = [];
+      }
+
+      if (Object.prototype.toString.call( userPageConfig.data.Groups ) === '[object Object]') {
+        this.setState({groups: [userPageConfig.data.Groups], ownerId: userPageConfig.data.OwnerId}, () => {
+          this.state.groups.map((entry, index) => {
+            if (entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Object]') {
+              this.setState({
+                groups: [
+                  ...this.state.groups.slice(0, index),
+                  Object.assign({}, this.state.groups[index], {
+                    Pages: [this.state.groups[index].Pages]
+                  }),
+                  ...this.state.groups.slice(index + 1)
+                ]
+              })
+            }
+          })
+        })
+      } else {
+        this.setState({groups: userPageConfig.data.Groups, ownerId: userPageConfig.data.OwnerId}, () => {
+          this.state.groups.map((entry, index) => {
+            if (entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Object]') {
+              this.setState({
+                groups: [
+                  ...this.state.groups.slice(0, index),
+                  Object.assign({}, this.state.groups[index], {
+                    Pages: [this.state.groups[index].Pages]
+                  }),
+                  ...this.state.groups.slice(index + 1)
+                ]
+              })
+            }
+          })
+        })
+      }
+
     }).catch((err) => {
       console.error('err', err);
     })
@@ -56,6 +93,7 @@ class Home extends Component {
 
   createHandler = (name) => {
     let tempindex = 0;
+
     this.state.groups.map((entry) => {
       if (parseInt(entry.Index) > tempindex) {
         tempindex = parseInt(entry.Index);
@@ -116,6 +154,7 @@ class Home extends Component {
   pageDeleteHandler = (index, pageIndex) => {
     if (pageIndex || pageIndex === 0) {
       let pageId = this.state.groups[index].Pages[pageIndex].Id;
+      console.log('aaaa', this.state.groups);
       if (this.state.groups[index].Pages.length > 2) {
         this.setState(Object.assign({}, this.state, {
           groups: [
@@ -312,7 +351,44 @@ class Home extends Component {
       .then(() => {
         if (flag) {
           axios.post('/rest/pageconfig/get', {session: window.sessionStorage.getItem("session")}).then((userPageConfig) => {
-            this.setState({groups: userPageConfig.data.Groups, ownerId: userPageConfig.data.OwnerId})
+
+            if (!userPageConfig.data.Groups) {
+              userPageConfig.data.Groups = [];
+            }
+
+            if (Object.prototype.toString.call( userPageConfig.data.Groups ) === '[object Object]') {
+              this.setState({groups: [userPageConfig.data.Groups], ownerId: userPageConfig.data.OwnerId}, () => {
+                this.state.groups.map((entry, index) => {
+                  if (entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Object]') {
+                    this.setState({
+                      groups: [
+                        ...this.state.groups.slice(0, index),
+                        Object.assign({}, this.state.groups[index], {
+                          Pages: [this.state.groups[index].Pages]
+                        }),
+                        ...this.state.groups.slice(index + 1)
+                      ]
+                    })
+                  }
+                })
+              })
+            } else {
+              this.setState({groups: userPageConfig.data.Groups, ownerId: userPageConfig.data.OwnerId}, () => {
+                this.state.groups.map((entry, index) => {
+                  if (entry.Pages && Object.prototype.toString.call( entry.Pages ) === '[object Object]') {
+                    this.setState({
+                      groups: [
+                        ...this.state.groups.slice(0, index),
+                        Object.assign({}, this.state.groups[index], {
+                          Pages: [this.state.groups[index].Pages]
+                        }),
+                        ...this.state.groups.slice(index + 1)
+                      ]
+                    })
+                  }
+                })
+              })
+            }
           }).catch((err) => {})
         }
       })
@@ -343,7 +419,13 @@ class Home extends Component {
                             <div className="panel-heading clearfix">
                               <div className="col-sm-6" style={{padding: 0}}>
                                 {this.state.groupInputFlag === index
-                                  ? <input ref={`groupInput${index}`} type="text" defaultValue={entry.Title} className="form-control" style={{margin: '5px'}}/>
+                                  ? <input ref={`groupInput${index}`} type="text" defaultValue={entry.Title} onKeyPress={
+                                              (event) => {
+                                                if (event.key == 'Enter') {
+                                                  this.renameHandler(index);
+                                                }
+                                              }
+                                      } className="form-control" style={{margin: '5px'}}/>
                                   : <h3 className="panel-title">{entry.Title}</h3>
                                 }
                               </div>
@@ -363,7 +445,13 @@ class Home extends Component {
                               <div className="add-row-editable-table">
                                 {/* <div className="col-md-6"> */}
                                   <div className="input-group">
-                                    <input type="text" ref={`pageCreateInput${index}`}  className="form-control" placeholder="Sitename"/>
+                                    <input type="text" ref={`pageCreateInput${index}`}  className="form-control" placeholder="Sitename" onKeyPress={
+                                            (event) => {
+                                              if (event.key == 'Enter') {
+                                                this.pageCreateHandler(index);
+                                              }
+                                            }
+                                    }/>
                                     <span className="input-group-btn">
                                       <button className="btn btn-primary stand-still" onClick={() => this.pageCreateHandler(index)} type="button">Add new site</button>
                                     </span>
@@ -377,7 +465,13 @@ class Home extends Component {
                                           <tr key={pageIndex}>
                                             <td>
                                               { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === pageIndex)
-                                                ? <input className="form-control input-xs" ref={`pageEditInput${index}arr${pageIndex}`} type="text" defaultValue={page.Title}/>
+                                                ? <input className="form-control input-xs" onKeyPress={
+                                                            (event) => {
+                                                              if (event.key == 'Enter') {
+                                                                this.pageEditHandler(index, pageIndex, page);
+                                                              }
+                                                            }
+                                                    } ref={`pageEditInput${index}arr${pageIndex}`} type="text" defaultValue={page.Title}/>
                                                 : <a style={{color: '#fff'}} href={'#/newPage/' + page.Id}>{page.Title}</a>
                                               }
                                             </td>
@@ -405,7 +499,13 @@ class Home extends Component {
                                     <tr>
                                       <td>
                                         { (this.state.pageEditInputFlag && this.state.pageEditInputFlag.index === index && this.state.pageEditInputFlag.pageIndex === null)
-                                          ? <input className="form-control input-xs" ref={`pageEditInput${index}`} type="text" defaultValue={entry.Pages.Title}/>
+                                          ? <input className="form-control input-xs" onKeyPress={
+                                                      (event) => {
+                                                        if (event.key == 'Enter') {
+                                                          this.pageEditHandler(index, null, entry.Pages);
+                                                        }
+                                                      }
+                                              } ref={`pageEditInput${index}`} type="text" defaultValue={entry.Pages.Title}/>
                                           : <a style={{color: '#fff'}} href={'#/newPage/' + entry.Pages.Id}>{entry.Pages.Title}</a>
                                         }
                                       </td>

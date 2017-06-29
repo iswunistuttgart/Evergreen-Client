@@ -35,6 +35,10 @@ if (env === 'development') {
   // app.use('/docs', express.static(path.join(__dirname, 'docs'))); // TODO: add api documentation
 }
 
+app.use('/true', function (req, res) {
+  res.redirect('/');
+})
+
 app.use('/rest', conductor);
 router(app);
 

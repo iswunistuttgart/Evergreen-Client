@@ -195,15 +195,12 @@ API.txt for details.
 		[1, "year"]]);
 
 	function init(plot) {
-		console.log('wwww');
 		plot.hooks.processOptions.push(function (plot, options) {
 			$.each(plot.getAxes(), function(axisName, axis) {
 
 				var opts = axis.options;
 
-				console.log('set asdasd');
 				if (opts.mode == "time") {
-					console.log('set tickGenerator');
 					axis.tickGenerator = function(axis) {
 
 						var ticks = [];
