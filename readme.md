@@ -34,11 +34,10 @@ This project is licensed under the terms of the GPL 3.0 license.
 
 
 #### Used technologies on Evergreen-Client and Node-App(Middleware):
-| React.JS | 
-| Bootstrap  |
-| Node.JS | 
-| Express.JS| 
-| Node-Soap |
-| Axios |
-| Socket.io |
-<a href=htttp://www.google.com>
+<a href="https://facebook.github.io/react/">|React.JS|</a>
+<a href="http://getbootstrap.com/">Bootstrap|</a>
+<a href="http://https://nodejs.org/en/">Node.JS|</a>
+<a href="http://http://expressjs.com/">Express.JS|</a>
+<a href="http://https://github.com/vpulim/node-soap">Node-Soap|</a>
+<a href="http://https://github.com/mzabriskie/axios">Axios|</a>
+<a href="https://socket.io/">Socket.io|</a>
