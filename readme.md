@@ -35,9 +35,6 @@ The best way to install webpack is to install webpack with npm
  ```
 
 
-(on Windows, you can drop the “sudo” but you should run it as administrator). Running this update will give you the most recent stable version of npm, also supported by npm Inc.
-
-
 ## 3. Familiar with Git?
 
 Checkout this repo, install dependencies, then start the gulp process with the following:
