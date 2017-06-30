@@ -57,7 +57,7 @@ Checkout this repo, install dependencies, then start the gulp process with the f
  ```
  
  ## 5. Build Evergreen-Client
-
+Open a new tab on your terminal and:
  ```
  > webpack -w
  ```
