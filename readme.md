@@ -27,3 +27,16 @@ Checkout this repo, install dependencies, then start the gulp process with the f
 
 #### Access Evergreen-Client
 Type in localhost:3000 in browser
+
+
+#### License
+This project is licensed under the terms of the MIT license.
+
+
+#### Used technologies on Evergreen-Client and Node-App(Middleware):
+| React.JS | 
+| Node.JS | 
+| Express.JS|
+| Bootstrap  | 
+| Axios |
+| Socket.io |
