@@ -61,8 +61,9 @@ Open a new tab on your terminal and:
  ```
  > webpack -w
  ```
+Wait till Evergreen-Client is build
 
-## 5. Access Evergreen-Client:
+## 6. Access Evergreen-Client:
 Type in localhost:3000 in browser
 
 
