@@ -74,4 +74,6 @@ Type in localhost:3000 in browser
 
 
 ## License:
-This project is licensed under the terms of the GPL 3.0 license. For more details have a look on License.txt
+This project is licensed under the terms of the GPL 3.0 license. For more details have a look on <a href="https://github.com/iswunistuttgart/Evergreen-Client/blob/master/License.txt">License.txt</a> 
+
+
