@@ -1,5 +1,5 @@
 # Evergreen-Client
-The Evergreen-Client is a web-application, where users can remote control machine tools. Dependent on the current situation, the users can customize their own user-interfaces with widgets like buttons, graphs, inpufields, outputfields, switch-buttons, LED-lamps.
+The Evergreen-Client is a web-application, where users have the possibility to remote control machine tools. Dependent on the current situation, the users can customize their own user-interfaces with widgets like buttons, graphs, inpufields, outputfields, switch-buttons, LED-lamps.
 The Evergreen-Client will only work if the the evergreen-soap-server(soap-webservice) and the machine-server(OPC-UA server) is running.
 
 ## Getting Started:
