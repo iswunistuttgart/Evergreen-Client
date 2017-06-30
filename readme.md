@@ -55,6 +55,12 @@ Checkout this repo, install dependencies, then start the gulp process with the f
  > npm install
  > npm start
  ```
+ 
+ ## 5. Build Evergreen-Client
+
+ ```
+ > webpack -w
+ ```
 
 ## 5. Access Evergreen-Client:
 Type in localhost:3000 in browser
