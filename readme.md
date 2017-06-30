@@ -59,10 +59,6 @@ Checkout this repo, install dependencies, then start the gulp process with the f
 Type in localhost:3000 in browser
 
 
-## License:
-This project is licensed under the terms of the GPL 3.0 license. For more details have a look on License.txt
-
-
 ## Used technologies on Evergreen-Client and Node-App(Middleware):
 
 | Technologies | Description |
@@ -74,3 +70,7 @@ This project is licensed under the terms of the GPL 3.0 license. For more detail
 | <a href="http://https://github.com/vpulim/node-soap">Node-Soap</a> | This module lets you connect to web services using SOAP |
 | <a href="http://https://github.com/mzabriskie/axios">Axios</a> | Promise based HTTP client for the browser and node.js |
 | <a href="https://socket.io/">Socket.io</a>| Socket.io is a JavaScript library for realtime web applications. It enables realtime, bi-directional communication between web clients and servers |
+
+
+## License:
+This project is licensed under the terms of the GPL 3.0 license. For more details have a look on License.txt
