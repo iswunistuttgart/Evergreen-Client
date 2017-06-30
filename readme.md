@@ -36,7 +36,7 @@ The best way to install webpack is to install webpack with npm
  ```
 
 
-## 3. Familiar with Git?
+## 3. Ceckout repo and run Node-App
 
 Checkout this repo, install dependencies, then start the gulp process with the following:
 
@@ -48,7 +48,7 @@ Checkout this repo, install dependencies, then start the gulp process with the f
 
 ```
 
-## 4. Not Familiar with Git?
+## 3. Download repo and run Node-App
  Download the .zip file.  Extract the contents of the zip file, then open your terminal, change to the project directory, and:
 
  ```
@@ -56,14 +56,14 @@ Checkout this repo, install dependencies, then start the gulp process with the f
  > npm start
  ```
  
- ## 5. Build Evergreen-Client
+ ## 4. Build Evergreen-Client
 Open a new tab on your terminal and:
  ```
  > webpack -w
  ```
 Wait till Evergreen-Client is build
 
-## 6. Access Evergreen-Client:
+## 5. Access Evergreen-Client:
 Type in localhost:3000 in browser
 
 
