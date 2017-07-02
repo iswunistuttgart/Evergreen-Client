@@ -70,12 +70,12 @@ Type in localhost:3000 in browser
 
 | Technologies | Description |
 | --- | --- |
-| <a href="https://facebook.github.io/react/">React.JS</a> | A Jacascript Framework for building user interfaces |
+| <a href="https://facebook.github.io/react/">React.JS</a> | A Javascript Framework for building user interfaces |
 | <a href="http://getbootstrap.com/">Bootstrap</a> | Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile first projects on the web |
-| <a href="http://https://nodejs.org/en/">Node.JS</a> | Node.js is a cross-platform JavaScript run-time environment for executing JavaScript code server-side |
-| <a href="http://http://expressjs.com/">Express.JS</a> | Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications |
-| <a href="http://https://github.com/vpulim/node-soap">Node-Soap</a> | This module lets you connect to web services using SOAP |
-| <a href="http://https://github.com/mzabriskie/axios">Axios</a> | Promise based HTTP client for the browser and node.js |
+| <a href="https://nodejs.org/en/">Node.JS</a> | Node.js is a cross-platform JavaScript run-time environment for executing JavaScript code server-side |
+| <a href="http://expressjs.com/">Express.JS</a> | Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications |
+| <a href="https://github.com/vpulim/node-soap">Node-Soap</a> | This module lets you connect to web services using SOAP |
+| <a href="https://github.com/mzabriskie/axios">Axios</a> | Promise based HTTP client for the browser and node.js |
 | <a href="https://socket.io/">Socket.io</a>| Socket.io is a JavaScript library for realtime web applications. It enables realtime, bi-directional communication between web clients and servers |
 
 
